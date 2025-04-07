@@ -1,0 +1,9 @@
+model WeaponDetail {
+  id            Int         @id @default(autoincrement())
+  itemId        Int         @unique
+  item          Item        @relation(fields: [itemId], references: [id])
+  weaponType    WeaponType
+  specialEffect       String?     // 特殊效果
+  attackType    AttackType
+  starBonuses   StarBonus[]
+}

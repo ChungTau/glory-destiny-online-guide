@@ -1,0 +1,7 @@
+model PetEggDetail {
+  id      Int   @id @default(autoincrement())
+  itemId  Int   @unique
+  item    Item  @relation(fields: [itemId], references: [id])
+  petId   Int   @unique
+  pet     Pet   @relation("PetEggDetailRelation", fields: [petId], references: [id])
+}

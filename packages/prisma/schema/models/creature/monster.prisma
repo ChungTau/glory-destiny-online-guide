@@ -1,0 +1,13 @@
+model Monster {
+  id          Int       @id @default(autoincrement())
+  creature    Creature  @relation(fields: [creatureId], references: [id])
+  creatureId  Int      @unique // 確保一對一關係
+  
+  drops       MonsterDrop[]
+  attackMode  AttackMode // 攻擊類型，主動或被動
+  monsterStage MonsterStage // 怪物階段
+  dungeonMonster DungeonMonster?
+  canCapture  Boolean    @default(true)
+  petEgg      Item?      @relation("MonsterToPetEgg", fields: [petEggId], references: [id])
+  petEggId    Int?
+}

@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "@glory-destiny-online-guide/prisma/*": ["packages/prisma/*"]
+      },
+      "module": "commonjs",
+      "target": "es6",
+      "strict": true,
+      "esModuleInterop": true
+    }
+}

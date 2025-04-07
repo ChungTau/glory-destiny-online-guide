@@ -1,0 +1,9 @@
+model SkillAdvancement {
+  id              Int        @id @default(autoincrement())
+  skillId         Int        // 進階的技能ID
+  requiredLevel   Int        // 進階所需的最低等級
+  nextSkillId     Int?       // 進階後的技能ID（關聯到下一個技能）
+
+  skill           Skill      @relation("SkillAdvancements", fields: [skillId], references: [id])
+  nextSkill       Skill?     @relation("SkillRequirements", fields: [nextSkillId], references: [id])
+}

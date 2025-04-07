@@ -1,0 +1,10 @@
+model ItemAttribute {
+  id          Int       @id @default(autoincrement())
+  itemId      Int       // Foreign key to Item
+  attribute   Attribute // Attribute type from the enum
+  baseValue   Float?
+  unit        UnitType?   // 使用 UnitType 枚舉規範單位
+  item        Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([itemId]) // Index for query optimization
+}

@@ -1,0 +1,19 @@
+model Job {
+  id                Int         @id @default(autoincrement())
+  name              String
+  faction           Faction
+  stage             JobStage
+  minPromotionLevel Int?        // For example: 40 for FIRST → SECOND, 55 for SECOND → THIRD
+  iconUrl           String?
+  raceId            Int
+  race              Race        @relation(fields: [raceId], references: [id])
+  
+  parentJobId       Int?
+  parentJob         Job?        @relation("JobHierarchy", fields: [parentJobId], references: [id])
+  childJobs         Job[]       @relation("JobHierarchy")
+  
+  jobSkills         JobSkill[]
+  items             Item[]      @relation("ItemJobs")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}

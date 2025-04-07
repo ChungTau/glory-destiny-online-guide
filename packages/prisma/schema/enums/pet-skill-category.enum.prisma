@@ -1,0 +1,4 @@
+enum PetSkillCategory {
+  COMBAT  // 戰鬥技能
+  FUSION  // 融合技能
+}

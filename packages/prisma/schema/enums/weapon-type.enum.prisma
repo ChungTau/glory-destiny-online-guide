@@ -1,0 +1,12 @@
+enum WeaponType {
+  DAGGER        // 匕首
+  KNUCKLE       // 拳套
+  ONE_HAND_SWORD // 單手劍
+  ONE_HAND_STAFF // 單手杖
+  HAMMER        // 大鎚
+  KATANA        // 太刀
+  BOW           // 弓
+  CROSSBOW      // 弩
+  POLEARM       // 長柄武器
+  TWO_HAND_STAFF // 雙手杖
+}

@@ -1,0 +1,8 @@
+enum ItemObtainType {
+  DROPPED      // 掉落
+  QUEST        // 任務
+  CHEST        // 開箱
+  REPUTATION   // 聲望
+  PURCHASE     // 購買
+  CRAFTING     // 製作
+}

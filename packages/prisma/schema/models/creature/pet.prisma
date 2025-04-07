@@ -1,0 +1,17 @@
+model Pet {
+  id          Int       @id @default(autoincrement())
+  creature    Creature  @relation(fields: [creatureId], references: [id])
+  creatureId  Int      @unique // 確保一對一關係
+  
+  obtainType  PetObtainType
+  obtainWay   String?
+  bodyType    BodyType
+  
+  skills   PetSkillLink[] // 更新為中介模型
+  
+  attributes PetAttribute[]
+  quality     ItemQuality
+  petEgg      Item      @relation("PetToEgg", fields: [petEggId], references: [id])
+  petEggId    Int
+  petEggDetail PetEggDetail? @relation("PetEggDetailRelation")
+}

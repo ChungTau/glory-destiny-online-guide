@@ -1,0 +1,7 @@
+enum ArmorSlot {
+  HEAD          // 頭部
+  BODY          // 身體
+  WAIST         // 腰部
+  HANDS         // 手部
+  FEET          // 腳部
+}

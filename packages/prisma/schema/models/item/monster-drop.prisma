@@ -1,0 +1,8 @@
+model MonsterDrop {
+  monsterId   Int
+  itemId      Int
+  monster     Monster   @relation(fields: [monsterId], references: [id])
+  item        Item      @relation(fields: [itemId], references: [id])
+  requiresBreak Boolean @default(false)
+  @@id([monsterId, itemId])
+}

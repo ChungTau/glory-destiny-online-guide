@@ -1,0 +1,7 @@
+enum CostumeSlot {
+  HEAD          // 頭部
+  FACE          // 臉部
+  BODY          // 身體
+  BACK          // 背部
+  WEAPON        // 武器
+}

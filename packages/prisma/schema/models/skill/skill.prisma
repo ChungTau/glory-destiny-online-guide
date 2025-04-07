@@ -1,0 +1,18 @@
+model Skill {
+  id           Int         @id @default(autoincrement())
+  name         String      @unique
+  stage        JobStage
+  lvMin        Int
+  lvMax        Int
+  lvChar       Int
+  baseCooldown Int?
+  atkType      AttackType
+  iconUrl      String?
+  skillType    SkillType
+  advancements SkillAdvancement[] @relation("SkillAdvancements") // 進階技能關聯
+  requiredBy   SkillAdvancement[] @relation("SkillRequirements")   // 反向要求技能關聯
+
+  jobSkills    JobSkill[]
+  levels       SkillLevel[]
+  @@index([name, stage])
+}

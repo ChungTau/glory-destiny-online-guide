@@ -1,0 +1,14 @@
+model StarBonus {
+  id             Int           @id @default(autoincrement())
+  starLevel      Int           // 1 => 一星, 2 => 二星, ...
+  description    String
+
+  weaponDetailId Int?
+  weaponDetail   WeaponDetail? @relation(fields: [weaponDetailId], references: [id])
+
+  armorDetailId  Int?
+  armorDetail    ArmorDetail?  @relation(fields: [armorDetailId], references: [id])
+
+  petEquipmentDetailId Int?
+  petEquipmentDetail PetEquipmentDetail? @relation(fields: [petEquipmentDetailId], references: [id])
+}

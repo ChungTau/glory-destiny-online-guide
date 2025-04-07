@@ -1,0 +1,7 @@
+model EnhancementDetail {
+  id            Int         @id @default(autoincrement())
+  itemId        Int         @unique
+  item          Item        @relation(fields: [itemId], references: [id])
+  minLevel      Int
+  maxLevel      Int         // 最大强化等級
+}

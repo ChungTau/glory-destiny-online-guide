@@ -1,0 +1,7 @@
+model RuneStoneDetail {
+  id            Int       @id @default(autoincrement())
+  itemId        Int       @unique
+  item          Item      @relation(fields: [itemId], references: [id])
+  slot          ArmorSlot // 使用相同的裝備槽位枚舉
+  stats         Json      // 符石提供的屬性加成
+}

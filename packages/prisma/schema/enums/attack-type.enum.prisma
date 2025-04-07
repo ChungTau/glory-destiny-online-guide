@@ -1,0 +1,8 @@
+enum AttackType {
+  PHYSICAL  // 物理
+  FIRE      // 火焰
+  FROST     // 冰霜
+  HOLY      // 神聖
+  WIND      // 蒼風
+  THUNDER   // 雷電
+}

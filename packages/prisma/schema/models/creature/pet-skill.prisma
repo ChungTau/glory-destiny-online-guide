@@ -1,0 +1,11 @@
+model PetSkill {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String     // 技能描述，例如 "力量5%"
+  
+  // 標識技能類型
+  skillType   SkillType // 例如 ACTIVE 或 PASSIVE
+  skillCategory PetSkillCategory // 新增技能類別，區分戰鬥技能和融合技能
+  
+  pets        PetSkillLink[] // 更新為中介模型
+}

@@ -1,0 +1,8 @@
+enum ToolType {
+  FARM          // 農場
+  ARENA         // 武鬥場
+  RUNE_CLOTH    // 符文布
+  CAPSULE       // 膠囊
+  POTION        // 藥劑
+  FISHING       // 釣魚
+}

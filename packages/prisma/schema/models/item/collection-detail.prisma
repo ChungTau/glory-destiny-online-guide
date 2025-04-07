@@ -1,0 +1,8 @@
+model CollectionDetail {
+  id            Int       @id @default(autoincrement())
+  itemId        Int       @unique
+  item          Item      @relation(fields: [itemId], references: [id])
+  nationId     Int       // 關聯的國家ID
+  nation   Nation @relation(fields: [nationId], references: [id])
+  setId         Int?      // 收集品套裝ID
+}

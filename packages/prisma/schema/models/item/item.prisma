@@ -1,0 +1,62 @@
+model Item {
+  id            Int         @id @default(autoincrement())
+  name          String
+  description   String?
+  iconUrl       String?     // 圖片路徑
+  type          ItemType
+  quality       ItemQuality @default(WHITE)
+  stackable     Boolean     @default(false)
+  tradeable     Boolean     @default(true)
+  sellable      Boolean     @default(true)
+  price         Int         @default(0)
+  requiredLevel Int
+  durability    Int
+  allowedJobs   Job[]       @relation("ItemJobs")
+  attributes    ItemAttribute[]
+
+  // 武器特有属性
+  weaponDetail  WeaponDetail?
+  
+  // 防具特有属性
+  armorDetail   ArmorDetail?
+  
+  // 飾品特有属性
+  accessoryDetail AccessoryDetail?
+  
+  // 裝扮特有属性
+  costumeDetail CostumeDetail?
+  
+  // 寵物裝備特有属性
+  petEquipDetail PetEquipmentDetail?
+  
+  // 寵物蛋特有属性
+  petEggDetail  PetEggDetail?
+  
+  // 材料特有属性
+  materialDetail MaterialDetail?
+  
+  // 強化道具特有属性
+  enhancementDetail EnhancementDetail?
+  
+  // 道具特有属性
+  toolDetail    ToolDetail?
+  
+  // 任務道具特有属性
+  questDetail   QuestItemDetail?
+  
+  // 收集品特有属性
+  collectionDetail CollectionDetail?
+  
+  // 符石特有属性
+  runeStoneDetail RuneStoneDetail?
+  
+  // 關聯
+  monsterDrops  MonsterDrop[]
+  monsterEggs  Monster[]    @relation("MonsterToPetEgg")
+  petEggs      Pet[]        @relation("PetToEgg")
+  obtainMethod ItemObtainMethod[]
+  questRewardItem QuestRewardItem[]
+  triggeredQuest   Quest?      @relation("TriggerItemToQuest")
+  @@index([name])   // 按名称搜索物品
+  @@index([type, quality]) // 按類別和品質篩選
+}

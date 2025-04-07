@@ -1,0 +1,4 @@
+enum UnitType {
+  PERCENT          // 百分比（%）
+  POINTS           // 絕對值（點，如 20 點攻擊力）
+}

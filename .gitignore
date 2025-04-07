@@ -1,0 +1,33 @@
+# 環境變數文件
+.env
+.env.local
+.env.*.local
+
+# Node.js 同 pnpm 相關
+node_modules/
+pnpm-lock.yaml  # 可選，視乎你想唔想版本控制 lockfile
+.pnpm-store/
+
+# 生成文件
+dist/
+generated/
+
+# 日誌同臨時文件
+*.log
+*.log.*
+*.tmp
+
+# Docker 相關（可選）
+*.dockerignore
+
+# IDE 同編輯器文件
+.vscode/
+.idea/
+*.sublime-*
+
+# macOS 同 Windows 系統文件
+.DS_Store
+Thumbs.db
+
+# 測試覆蓋率報告（如果有）
+coverage/

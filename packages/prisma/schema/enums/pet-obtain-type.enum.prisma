@@ -1,0 +1,7 @@
+enum PetObtainType {
+  SPECIAL_EVENT      // 特殊活動
+  QUEST      // 任務
+  GACHA        // 扭蛋
+  PET_DUMPLING // 寵物糰子
+  DUNGEON      // 副本掉落
+}

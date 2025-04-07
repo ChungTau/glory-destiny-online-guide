@@ -1,0 +1,11 @@
+enum MaterialType {
+  GEM           // 寶石
+  WOOD          // 木材
+  CORE          // 核心
+  SPECIAL       // 特殊
+  FUR           // 皮毛
+  STONE         // 石頭
+  COIN          // 硬幣
+  RUNE          // 符文
+  METAL         // 金屬
+}

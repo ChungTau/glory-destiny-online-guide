@@ -1,0 +1,4 @@
+enum AttackMode {
+  ACTIVE    // 主動攻擊
+  PASSIVE   // 被動攻擊
+}

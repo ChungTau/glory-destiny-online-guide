@@ -1,0 +1,6 @@
+enum MonsterStage {
+  NORMAL        // 一般怪物
+  ELITE         // 精英怪物
+  BOSS          // 頭目怪物
+  COLOSSI       // 穹蒼巨獸
+}

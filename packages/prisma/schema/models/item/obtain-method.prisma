@@ -1,0 +1,9 @@
+model ObtainMethod {
+  id          Int       @id @default(autoincrement())
+  type        ItemObtainType
+  description String?   // 例如 "擊敗精英怪物後低概率掉落"
+  areaId      Int?      // 可選，關聯到地區
+  area        Area?     @relation(fields: [areaId], references: [id])
+  // 透過中介表關聯
+  items       ItemObtainMethod[]
+}

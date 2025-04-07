@@ -1,0 +1,11 @@
+model Area {
+  id        Int    @id @default(autoincrement())
+  name      String  @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  nationId Int
+  nation   Nation @relation(fields: [nationId], references: [id])
+  dungeons  Dungeon[]
+  creatures  Creature[]
+  obtainMethods    ObtainMethod[]
+}

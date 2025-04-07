@@ -1,0 +1,9 @@
+model QuestPrerequisite {
+  questId         Int
+  prerequisiteId  Int
+
+  quest           Quest @relation("QuestPrerequisiteQuest", fields: [questId], references: [id])
+  prerequisite    Quest @relation("QuestPrerequisitePre", fields: [prerequisiteId], references: [id])
+
+  @@id([questId, prerequisiteId])
+}

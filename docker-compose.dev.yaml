@@ -1,0 +1,71 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+  prisma:
+    build:
+      context: .
+      dockerfile: packages/prisma/Dockerfile.prisma
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - prisma_generated:/app/packages/prisma/generated # 共享卷宗
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/mydb?schema=public
+    develop:
+      watch:
+        - action: rebuild
+          path: ./packages/prisma/schema
+          target: /app/packages/prisma/schema
+        - action: rebuild
+          path: ./packages/prisma/scripts/merge-prisma.ts
+          target: /app/packages/prisma/scripts/merge-prisma.ts
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile.dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - prisma_generated:/app/packages/prisma/generated # 用同一個共享卷宗
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+      - redis
+      - prisma
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://user:password@postgres:5432/mydb?schema=public
+      - REDIS_URL=redis://redis:6379
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/api/src
+          target: /app/apps/api/src
+
+volumes:
+  postgres_data:
+  redis_data:
+  prisma_generated: # 新增共享卷宗

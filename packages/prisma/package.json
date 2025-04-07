@@ -1,0 +1,20 @@
+{
+  "name": "@glory-destiny-online-guide/prisma",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "main": "generated/index.ts",
+  "types": "generated/index.ts",
+  "description": "",
+  "scripts": {
+    "merge-prisma": "ts-node --transpile-only scripts/merge-prisma.ts",
+    "generate-entity-includes": "ts-node --transpile-only scripts/generate-entity-include.ts",
+    "generate-exports": "ts-node --transpile-only scripts/generate-exports.ts",
+    "generate": "prisma generate --schema=./schema/schema.prisma",
+    "build": "pnpm run merge-prisma && pnpm run generate && pnpm run generate-entity-includes && pnpm run generate-exports",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.6.4"
+}

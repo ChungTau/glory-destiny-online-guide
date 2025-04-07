@@ -1,0 +1,12 @@
+model ArmorSetBonus {
+  id            Int       @id @default(autoincrement())
+  setId         Int       // 外鍵，關聯到 ArmorSet
+  requiredPieces Int      // 觸發加成所需的件數，例如 2、4、5
+  attribute     Attribute // 加成的屬性，例如 STRENGTH、AGILITY
+  value         Float     // 加成數值
+  unit          UnitType?
+
+  set           ArmorSet  @relation(fields: [setId], references: [id], onDelete: Cascade)
+
+  @@index([setId]) // 索引優化
+}

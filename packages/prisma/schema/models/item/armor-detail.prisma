@@ -1,0 +1,11 @@
+model ArmorDetail {
+  id            Int         @id @default(autoincrement())
+  itemId        Int         @unique
+  item          Item        @relation(fields: [itemId], references: [id])
+  armorType     ArmorType
+  armorSlot     ArmorSlot
+  starBonuses   StarBonus[]
+  isSet         Boolean     @default(false) // 是否為套裝的一部分
+  setId         Int?        // 外鍵，關聯到 ArmorSet（可選，因為不是所有防具都屬於套裝）
+  set           ArmorSet?   @relation(fields: [setId], references: [id])
+}

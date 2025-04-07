@@ -1,0 +1,4 @@
+enum ArmorType {
+  HEAVY_ARMOR   // 甲冑
+  LIGHT_ARMOR   // 布袍
+}

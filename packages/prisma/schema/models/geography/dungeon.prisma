@@ -1,0 +1,10 @@
+model Dungeon {
+  id               Int       @id @default(autoincrement())
+  name             String    @unique
+  description      String?
+  requiredLevel  Int      // 進入地牢所需的最低等級
+  areaId           Int       // 關聯到地區
+  area             Area      @relation(fields: [areaId], references: [id])
+  monsters         DungeonMonster[] // 地牢中的怪物
+  maxParticipants  Int       // 最大人數上限
+}

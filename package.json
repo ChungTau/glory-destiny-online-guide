@@ -1,0 +1,22 @@
+{
+  "name": "glory-destiny-online-guide",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.6.4",
+  "dependencies": {
+    "@prisma/client": "^6.5.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.24.0",
+    "prisma": "^6.5.0",
+    "typescript": "^5.8.3",
+    "ts-node": "^10.9.2"
+  }
+}

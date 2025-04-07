@@ -1,0 +1,10 @@
+model QuestItemDetail {
+  id       Int    @id @default(autoincrement())
+  itemId   Int    @unique
+  item     Item   @relation(fields: [itemId], references: [id])
+  
+  questId  Int
+  quest    Quest  @relation(fields: [questId], references: [id]) // 加入關聯
+
+  isKey    Boolean @default(false) // 是否為關鍵任務道具
+}

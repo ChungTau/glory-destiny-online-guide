@@ -1,0 +1,10 @@
+model PetAttribute {
+  id        Int        @id @default(autoincrement())
+  petId     Int
+  attribute Attribute
+  value Float
+  unit      UnitType?
+
+  pet       Pet        @relation(fields: [petId], references: [id])
+  @@unique([petId, attribute]) // 同一隻寵物不重複同一屬性
+}

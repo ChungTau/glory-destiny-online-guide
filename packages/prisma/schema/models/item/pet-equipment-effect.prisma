@@ -1,0 +1,14 @@
+model PetEquipmentEffect {
+  id           Int         @id @default(autoincrement())      
+  effectType   EffectType  // 效果類型
+  target       Target?     // 目標，使用枚舉，可選
+  attribute    Attribute?  // 影響的屬性，使用枚舉，可選
+  baseValue    Float?
+  unit         UnitType?   // 使用 UnitType 枚舉規範單位
+  chance       Float?      // 機率（例如 15 表示 15%）
+  duration     Float?      // 持續時間（秒）
+  interval     Float?      // 間隔（例如每秒觸發的持續傷害）
+  stackLimit   Int?
+
+  equipmentDetail PetEquipmentDetail[]
+}

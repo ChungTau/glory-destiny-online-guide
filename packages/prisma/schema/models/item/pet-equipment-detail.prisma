@@ -1,0 +1,9 @@
+model PetEquipmentDetail {
+  id            Int              @id @default(autoincrement())
+  itemId        Int              @unique
+  item          Item             @relation(fields: [itemId], references: [id])
+  equipType     PetEquipmentType
+  requiredLevel Int
+  effects       PetEquipmentEffect[]
+  starBonuses   StarBonus[]
+}

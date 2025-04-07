@@ -1,0 +1,15 @@
+enum Target {
+  SINGLE_TARGET     // 單一目標
+  AREA_OF_EFFECT    // 指定範圍
+  SELF              // 自身
+  ALLIES            // 隊友
+  SELF_AND_ALLIES   // 自身與隊友
+  ENEMIES           // 敵人
+  LINE              // 直線範圍
+  DUAL_LINE         // 雙直線範圍
+  CONE              // 扇形範圍
+  CROSS             // 十字範圍
+  DEAD_ALLIES       // 死亡的隊友
+  SUMMONED_UNIT     // 召喚單位
+  SELF_CENTERED_AOE // 以自身為中心的範圍
+}

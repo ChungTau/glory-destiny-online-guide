@@ -1,0 +1,16 @@
+model CostumeDetail {
+  id            Int         @id @default(autoincrement())
+  itemId        Int         @unique
+  item          Item        @relation(fields: [itemId], references: [id])
+  costumeSlot   CostumeSlot
+  gender        Gender      // 性別
+  duration      Int?        // 若是限時裝扮
+  maxHealthIncrease           Float?      // 生命值上限提高 n %
+  physicalCritRateIncrease    Float?      // 物理爆擊率提高 n %
+  magicCritRateIncrease       Float?      // 術法爆擊率提高 n %
+  allResistanceIncrease        Float?      // 全抗性提高 n %
+  physicalCritDamageIncrease   Float?      // 物理爆擊傷害提高 n %
+  magicCritDamageIncrease      Float?      // 術法爆擊傷害提高 n %
+  attackPowerIncrease          Float?      // 攻擊值提高 n %
+  healingAmountIncrease        Float?      // 治療量提高 n %
+}

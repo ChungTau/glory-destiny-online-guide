@@ -1,0 +1,8 @@
+model ArmorSet {
+  id            Int           @id @default(autoincrement())
+  name          String        @unique // 套裝名稱，例如 "龍騎士套裝"
+  description   String?       // 套裝描述
+
+  items         ArmorDetail[] // 關聯到屬於該套裝的防具
+  bonuses       ArmorSetBonus[] // 套裝的階段性加成
+}

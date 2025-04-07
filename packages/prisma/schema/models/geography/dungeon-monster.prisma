@@ -1,0 +1,7 @@
+model DungeonMonster {
+  id         Int      @id @default(autoincrement())  // 單一主鍵
+  dungeonId  Int
+  monsterId  Int      @unique  // 唯一約束，確保怪物只能屬於一個副本
+  dungeon    Dungeon @relation(fields: [dungeonId], references: [id], onDelete: Cascade)
+  monster    Monster  @relation(fields: [monsterId], references: [id])
+}

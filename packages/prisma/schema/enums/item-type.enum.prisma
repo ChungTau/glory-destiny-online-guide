@@ -1,0 +1,14 @@
+enum ItemType {
+  WEAPON        // 武器
+  ARMOR         // 防具(甲冑/布袍)
+  ACCESSORY     // 飾品
+  COSTUME       // 裝扮
+  PET_EQUIPMENT // 寵物裝備
+  PET_EGG       // 寵物蛋
+  MATERIAL      // 材料
+  ENHANCEMENT   // 強化道具
+  TOOL          // 一般道具
+  QUEST_ITEM    // 任務道具
+  COLLECTION    // 收集品
+  RUNE_STONE    // 符石
+}

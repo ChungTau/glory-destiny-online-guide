@@ -1,0 +1,10 @@
+enum AccessoryType {
+  RING          // 戒指
+  ARTIFACT      // 神器
+  ARTIFACT_A    // 神器A
+  ARTIFACT_E    // 神器E
+  ARTIFACT_G    // 神器G
+  ARTIFACT_M    // 神器M
+  NECKLACE      // 項鍊
+  BADGE         // 徽章
+}

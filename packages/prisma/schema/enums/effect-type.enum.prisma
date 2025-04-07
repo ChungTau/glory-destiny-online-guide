@@ -1,0 +1,27 @@
+enum EffectType {
+  DAMAGE            // 單次傷害
+  DAMAGE_OVER_TIME  // 持續傷害
+  HEAL              // 單次治療
+  HEAL_OVER_TIME    // 持續治療
+  RESURRECTION      // 復活
+  BUFF              // 增益效果
+  DEBUFF            // 減益效果
+  SHIELD            // 護盾
+  REFLECT_DAMAGE    // 傷害反彈
+  STAT_BOOST        // 屬性提升（被動）
+  CROWD_CONTROL     // 群體控制（通用）
+  SILENCE           // 沉默/封技能
+  COOLDOWN_REDUCTION // 冷卻時間減少
+  TRANSFORMATION    // 變身
+  TAUNT             // 嘲諷
+  DAMAGE_REDUCTION  // 減傷
+  KNOCK_UP          // 浮空
+  KNOCKBACK         // 擊退
+  CLEANSE           // 淨化（移除負面狀態）
+  SUMMON            // 召喚單位
+  MULTI_HIT         // 多段攻擊
+  DASH              // 衝刺/位移
+  CONDITIONAL_EFFECT // 條件觸發效果（如機率觸發）
+  STACKABLE_EFFECT  // 可堆疊效果
+  TOGGLE            // 切換狀態
+}

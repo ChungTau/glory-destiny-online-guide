@@ -1,0 +1,6 @@
+enum BodyType {
+  ATTACK    // 攻擊型
+  DEFENSE   // 防禦型
+  NORMAL    // 一般型
+  HEALTH    // 生命型
+}

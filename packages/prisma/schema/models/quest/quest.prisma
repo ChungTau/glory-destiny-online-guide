@@ -1,0 +1,26 @@
+model Quest {
+  id             Int               @id @default(autoincrement())
+  name           String            // 任務名稱
+  description    String?           // 任務敘述
+  requiredLevel  Int?              // 等級限制
+  rewardExp      Int?              // 獎勵經驗值
+  rewardMoney    Int?              // 獎勵金錢
+  timeLimit      Int?              // 任務時限(秒、分、或其他單位)
+  triggerItemId  Int?   @unique  // 一對一關聯時要加 @unique
+  triggerItem    Item?  @relation("TriggerItemToQuest", fields: [triggerItemId], references: [id])
+  
+  // 假設有 NPC 模型時，可用以下兩欄關聯
+  giverNpcId     Int?
+  receiverNpcId  Int?
+
+  // 前置任務(多對多自我關聯)
+  prerequisites  QuestPrerequisite[] @relation("QuestPrerequisiteQuest")  // 這個任務需要完成哪些前置任務
+  nextQuests     QuestPrerequisite[] @relation("QuestPrerequisitePre")    // 哪些任務把本任務當作前置
+
+  // 若要將「關鍵任務道具」或「一般任務道具」的資訊也放在這裡
+  questItemDetails QuestItemDetail[] 
+
+  // 獎勵物品（多對多關係）
+  questRewardItems QuestRewardItem[] 
+  isRepeatable    Boolean       @default(false)
+}

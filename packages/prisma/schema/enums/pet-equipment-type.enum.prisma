@@ -1,0 +1,8 @@
+enum PetEquipmentType {
+  WEAPON        // 寵物武器
+  ARMOR         // 寵物防具
+  HELMET        // 寵物頭盔
+  NECKLACE      // 寵物項鍊
+  RING          // 寵物戒指
+  TOOL          // 寵物道具
+}

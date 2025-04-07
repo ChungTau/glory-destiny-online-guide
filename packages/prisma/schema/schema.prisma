@@ -1,0 +1,817 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+// Enums
+
+enum AccessoryType {
+  RING          // 戒指
+  ARTIFACT      // 神器
+  ARTIFACT_A    // 神器A
+  ARTIFACT_E    // 神器E
+  ARTIFACT_G    // 神器G
+  ARTIFACT_M    // 神器M
+  NECKLACE      // 項鍊
+  BADGE         // 徽章
+}
+
+enum ArmorSlot {
+  HEAD          // 頭部
+  BODY          // 身體
+  WAIST         // 腰部
+  HANDS         // 手部
+  FEET          // 腳部
+}
+
+enum ArmorType {
+  HEAVY_ARMOR   // 甲冑
+  LIGHT_ARMOR   // 布袍
+}
+
+enum AttackMode {
+  ACTIVE    // 主動攻擊
+  PASSIVE   // 被動攻擊
+}
+
+enum AttackType {
+  PHYSICAL  // 物理
+  FIRE      // 火焰
+  FROST     // 冰霜
+  HOLY      // 神聖
+  WIND      // 蒼風
+  THUNDER   // 雷電
+}
+
+enum Attribute {
+  PHYSICAL          // 物理
+  FIRE              // 火焰
+  FROST             // 冰霜
+  HOLY              // 神聖
+  WIND              // 蒼風
+  THUNDER           // 雷電
+  ATTACK            // 攻擊力
+  DEFENSE           // 防禦力
+  HP                // 生命值
+  MP                // 魔法值
+  MOVE_SPEED        // 移動速度
+  STRENGTH          // 力量
+  AGILITY           // 靈敏
+  SPIRIT            // 精神
+  INTELLIGENCE      // 才智
+  LUCK              // 運氣
+  DODGE             // 閃躲
+  CRITICAL          // 爆擊（通用）
+  CRITICAL_PHYSICAL // 物理爆擊
+  CRITICAL_SPELL    // 術法爆擊
+  RESISTANCE        // 抗性（全抗性）
+  HIT_RATE          // 命中率
+  ATTACK_SPEED      // 攻擊速度
+  SPELL_SPEED       // 法術速度
+  BLOCK             // 格擋
+  HEALING_RECEIVED  // 被治療量
+  DAMAGE_DEALT      // 輸出傷害加成
+  DAMAGE_TAKEN      // 受到傷害加成/減免
+  CRITICAL_DAMAGE_REDUCTION // 爆擊傷害減免
+  THREAT            // 仇恨值
+  HEALING_AMOUNT    // 治療量（新增）
+  CRITICAL_DAMAGE   // 爆擊傷害（新增，區分物理和術法）
+  FIRE_RESISTANCE   // 火焰抗性（新增）
+  FROST_RESISTANCE  // 冰霜抗性（新增）
+  WIND_RESISTANCE   // 蒼風抗性（新增）
+  THUNDER_RESISTANCE // 雷電抗性（新增）
+  SHADOW_RESISTANCE // 幽冥抗性（新增）
+}
+
+enum BodyType {
+  ATTACK    // 攻擊型
+  DEFENSE   // 防禦型
+  NORMAL    // 一般型
+  HEALTH    // 生命型
+}
+
+enum CostumeSlot {
+  HEAD          // 頭部
+  FACE          // 臉部
+  BODY          // 身體
+  BACK          // 背部
+  WEAPON        // 武器
+}
+
+enum EffectType {
+  DAMAGE            // 單次傷害
+  DAMAGE_OVER_TIME  // 持續傷害
+  HEAL              // 單次治療
+  HEAL_OVER_TIME    // 持續治療
+  RESURRECTION      // 復活
+  BUFF              // 增益效果
+  DEBUFF            // 減益效果
+  SHIELD            // 護盾
+  REFLECT_DAMAGE    // 傷害反彈
+  STAT_BOOST        // 屬性提升（被動）
+  CROWD_CONTROL     // 群體控制（通用）
+  SILENCE           // 沉默/封技能
+  COOLDOWN_REDUCTION // 冷卻時間減少
+  TRANSFORMATION    // 變身
+  TAUNT             // 嘲諷
+  DAMAGE_REDUCTION  // 減傷
+  KNOCK_UP          // 浮空
+  KNOCKBACK         // 擊退
+  CLEANSE           // 淨化（移除負面狀態）
+  SUMMON            // 召喚單位
+  MULTI_HIT         // 多段攻擊
+  DASH              // 衝刺/位移
+  CONDITIONAL_EFFECT // 條件觸發效果（如機率觸發）
+  STACKABLE_EFFECT  // 可堆疊效果
+  TOGGLE            // 切換狀態
+}
+
+enum Faction {
+  WARRIOR
+  ASSASSIN
+  TAOIST
+  ONMYOJI
+  MYSTIC
+  ARCHER
+  HUNTER
+  STRONGMAN
+  GUARDIAN
+  CELESTIAL
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum ItemObtainType {
+  DROPPED      // 掉落
+  QUEST        // 任務
+  CHEST        // 開箱
+  REPUTATION   // 聲望
+  PURCHASE     // 購買
+  CRAFTING     // 製作
+}
+
+enum ItemQuality {
+  WHITE
+  GREEN
+  BLUE
+  PURPLE
+  GOLD
+}
+
+enum ItemType {
+  WEAPON        // 武器
+  ARMOR         // 防具(甲冑/布袍)
+  ACCESSORY     // 飾品
+  COSTUME       // 裝扮
+  PET_EQUIPMENT // 寵物裝備
+  PET_EGG       // 寵物蛋
+  MATERIAL      // 材料
+  ENHANCEMENT   // 強化道具
+  TOOL          // 一般道具
+  QUEST_ITEM    // 任務道具
+  COLLECTION    // 收集品
+  RUNE_STONE    // 符石
+}
+
+enum JobStage {
+  FIRST
+  SECOND
+  THIRD
+}
+
+enum MaterialType {
+  GEM           // 寶石
+  WOOD          // 木材
+  CORE          // 核心
+  SPECIAL       // 特殊
+  FUR           // 皮毛
+  STONE         // 石頭
+  COIN          // 硬幣
+  RUNE          // 符文
+  METAL         // 金屬
+}
+
+enum MonsterStage {
+  NORMAL        // 一般怪物
+  ELITE         // 精英怪物
+  BOSS          // 頭目怪物
+  COLOSSI       // 穹蒼巨獸
+}
+
+enum PetEquipmentType {
+  WEAPON        // 寵物武器
+  ARMOR         // 寵物防具
+  HELMET        // 寵物頭盔
+  NECKLACE      // 寵物項鍊
+  RING          // 寵物戒指
+  TOOL          // 寵物道具
+}
+
+enum PetObtainType {
+  SPECIAL_EVENT      // 特殊活動
+  QUEST      // 任務
+  GACHA        // 扭蛋
+  PET_DUMPLING // 寵物糰子
+  DUNGEON      // 副本掉落
+}
+
+enum PetSkillCategory {
+  COMBAT  // 戰鬥技能
+  FUSION  // 融合技能
+}
+
+enum SkillType {
+  ACTIVE    // 對應 '主動'
+  PASSIVE
+}
+
+enum Target {
+  SINGLE_TARGET     // 單一目標
+  AREA_OF_EFFECT    // 指定範圍
+  SELF              // 自身
+  ALLIES            // 隊友
+  SELF_AND_ALLIES   // 自身與隊友
+  ENEMIES           // 敵人
+  LINE              // 直線範圍
+  DUAL_LINE         // 雙直線範圍
+  CONE              // 扇形範圍
+  CROSS             // 十字範圍
+  DEAD_ALLIES       // 死亡的隊友
+  SUMMONED_UNIT     // 召喚單位
+  SELF_CENTERED_AOE // 以自身為中心的範圍
+}
+
+enum ToolType {
+  FARM          // 農場
+  ARENA         // 武鬥場
+  RUNE_CLOTH    // 符文布
+  CAPSULE       // 膠囊
+  POTION        // 藥劑
+  FISHING       // 釣魚
+}
+
+enum UnitType {
+  PERCENT          // 百分比（%）
+  POINTS           // 絕對值（點，如 20 點攻擊力）
+}
+
+enum WeaponType {
+  DAGGER        // 匕首
+  KNUCKLE       // 拳套
+  ONE_HAND_SWORD // 單手劍
+  ONE_HAND_STAFF // 單手杖
+  HAMMER        // 大鎚
+  KATANA        // 太刀
+  BOW           // 弓
+  CROSSBOW      // 弩
+  POLEARM       // 長柄武器
+  TWO_HAND_STAFF // 雙手杖
+}
+
+// Models
+
+model AccessoryDetail {
+  id            Int           @id @default(autoincrement())
+  itemId        Int           @unique
+  item          Item          @relation(fields: [itemId], references: [id])
+  accessoryType AccessoryType
+}
+
+model Area {
+  id        Int    @id @default(autoincrement())
+  name      String  @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  nationId Int
+  nation   Nation @relation(fields: [nationId], references: [id])
+  dungeons  Dungeon[]
+  creatures  Creature[]
+  obtainMethods    ObtainMethod[]
+}
+
+model ArmorDetail {
+  id            Int         @id @default(autoincrement())
+  itemId        Int         @unique
+  item          Item        @relation(fields: [itemId], references: [id])
+  armorType     ArmorType
+  armorSlot     ArmorSlot
+  starBonuses   StarBonus[]
+  isSet         Boolean     @default(false) // 是否為套裝的一部分
+  setId         Int?        // 外鍵，關聯到 ArmorSet（可選，因為不是所有防具都屬於套裝）
+  set           ArmorSet?   @relation(fields: [setId], references: [id])
+}
+
+model ArmorSet {
+  id            Int           @id @default(autoincrement())
+  name          String        @unique // 套裝名稱，例如 "龍騎士套裝"
+  description   String?       // 套裝描述
+
+  items         ArmorDetail[] // 關聯到屬於該套裝的防具
+  bonuses       ArmorSetBonus[] // 套裝的階段性加成
+}
+
+model ArmorSetBonus {
+  id            Int       @id @default(autoincrement())
+  setId         Int       // 外鍵，關聯到 ArmorSet
+  requiredPieces Int      // 觸發加成所需的件數，例如 2、4、5
+  attribute     Attribute // 加成的屬性，例如 STRENGTH、AGILITY
+  value         Float     // 加成數值
+  unit          UnitType?
+
+  set           ArmorSet  @relation(fields: [setId], references: [id], onDelete: Cascade)
+
+  @@index([setId]) // 索引優化
+}
+
+model CollectionDetail {
+  id            Int       @id @default(autoincrement())
+  itemId        Int       @unique
+  item          Item      @relation(fields: [itemId], references: [id])
+  nationId     Int       // 關聯的國家ID
+  nation   Nation @relation(fields: [nationId], references: [id])
+  setId         Int?      // 收集品套裝ID
+}
+
+model CostumeDetail {
+  id            Int         @id @default(autoincrement())
+  itemId        Int         @unique
+  item          Item        @relation(fields: [itemId], references: [id])
+  costumeSlot   CostumeSlot
+  gender        Gender      // 性別
+  duration      Int?        // 若是限時裝扮
+  maxHealthIncrease           Float?      // 生命值上限提高 n %
+  physicalCritRateIncrease    Float?      // 物理爆擊率提高 n %
+  magicCritRateIncrease       Float?      // 術法爆擊率提高 n %
+  allResistanceIncrease        Float?      // 全抗性提高 n %
+  physicalCritDamageIncrease   Float?      // 物理爆擊傷害提高 n %
+  magicCritDamageIncrease      Float?      // 術法爆擊傷害提高 n %
+  attackPowerIncrease          Float?      // 攻擊值提高 n %
+  healingAmountIncrease        Float?      // 治療量提高 n %
+}
+
+model Creature {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  level       Int       @default(1)
+  areaId      Int?      // 外鍵，關聯到 Area
+  area        Area?     @relation(fields: [areaId], references: [id])
+  attackType  AttackType
+  bodyType    BodyType
+  description String?
+
+  monster     Monster?
+  pet         Pet?
+
+  @@index([name, level]) // 按名稱和等級查詢生物
+}
+
+model Dungeon {
+  id               Int       @id @default(autoincrement())
+  name             String    @unique
+  description      String?
+  requiredLevel  Int      // 進入地牢所需的最低等級
+  areaId           Int       // 關聯到地區
+  area             Area      @relation(fields: [areaId], references: [id])
+  monsters         DungeonMonster[] // 地牢中的怪物
+  maxParticipants  Int       // 最大人數上限
+}
+
+model DungeonMonster {
+  id         Int      @id @default(autoincrement())  // 單一主鍵
+  dungeonId  Int
+  monsterId  Int      @unique  // 唯一約束，確保怪物只能屬於一個副本
+  dungeon    Dungeon @relation(fields: [dungeonId], references: [id], onDelete: Cascade)
+  monster    Monster  @relation(fields: [monsterId], references: [id])
+}
+
+model EnhancementDetail {
+  id            Int         @id @default(autoincrement())
+  itemId        Int         @unique
+  item          Item        @relation(fields: [itemId], references: [id])
+  minLevel      Int
+  maxLevel      Int         // 最大强化等級
+}
+
+model Item {
+  id            Int         @id @default(autoincrement())
+  name          String
+  description   String?
+  iconUrl       String?     // 圖片路徑
+  type          ItemType
+  quality       ItemQuality @default(WHITE)
+  stackable     Boolean     @default(false)
+  tradeable     Boolean     @default(true)
+  sellable      Boolean     @default(true)
+  price         Int         @default(0)
+  requiredLevel Int
+  durability    Int
+  allowedJobs   Job[]       @relation("ItemJobs")
+  attributes    ItemAttribute[]
+
+  // 武器特有属性
+  weaponDetail  WeaponDetail?
+  
+  // 防具特有属性
+  armorDetail   ArmorDetail?
+  
+  // 飾品特有属性
+  accessoryDetail AccessoryDetail?
+  
+  // 裝扮特有属性
+  costumeDetail CostumeDetail?
+  
+  // 寵物裝備特有属性
+  petEquipDetail PetEquipmentDetail?
+  
+  // 寵物蛋特有属性
+  petEggDetail  PetEggDetail?
+  
+  // 材料特有属性
+  materialDetail MaterialDetail?
+  
+  // 強化道具特有属性
+  enhancementDetail EnhancementDetail?
+  
+  // 道具特有属性
+  toolDetail    ToolDetail?
+  
+  // 任務道具特有属性
+  questDetail   QuestItemDetail?
+  
+  // 收集品特有属性
+  collectionDetail CollectionDetail?
+  
+  // 符石特有属性
+  runeStoneDetail RuneStoneDetail?
+  
+  // 關聯
+  monsterDrops  MonsterDrop[]
+  monsterEggs  Monster[]    @relation("MonsterToPetEgg")
+  petEggs      Pet[]        @relation("PetToEgg")
+  obtainMethod ItemObtainMethod[]
+  questRewardItem QuestRewardItem[]
+  triggeredQuest   Quest?      @relation("TriggerItemToQuest")
+  @@index([name])   // 按名称搜索物品
+  @@index([type, quality]) // 按類別和品質篩選
+}
+
+model ItemAttribute {
+  id          Int       @id @default(autoincrement())
+  itemId      Int       // Foreign key to Item
+  attribute   Attribute // Attribute type from the enum
+  baseValue   Float?
+  unit        UnitType?   // 使用 UnitType 枚舉規範單位
+  item        Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([itemId]) // Index for query optimization
+}
+
+model ItemObtainMethod {
+  itemId        Int
+  obtainMethodId Int
+  item          Item        @relation(fields: [itemId], references: [id])
+  obtainMethod  ObtainMethod @relation(fields: [obtainMethodId], references: [id])
+  probability   Float?      // 掉落概率（例如 0.15 表示 15%）
+  minLevel      Int?        // 最低等級限制
+  maxQuantity   Int?        // 每次最大獲得數量
+
+  @@id([itemId, obtainMethodId])
+}
+
+model Job {
+  id                Int         @id @default(autoincrement())
+  name              String
+  faction           Faction
+  stage             JobStage
+  minPromotionLevel Int?        // For example: 40 for FIRST → SECOND, 55 for SECOND → THIRD
+  iconUrl           String?
+  raceId            Int
+  race              Race        @relation(fields: [raceId], references: [id])
+  
+  parentJobId       Int?
+  parentJob         Job?        @relation("JobHierarchy", fields: [parentJobId], references: [id])
+  childJobs         Job[]       @relation("JobHierarchy")
+  
+  jobSkills         JobSkill[]
+  items             Item[]      @relation("ItemJobs")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model JobSkill {
+  jobId   Int
+  skillId Int
+
+  job     Job   @relation(fields: [jobId], references: [id])
+  skill   Skill @relation(fields: [skillId], references: [id])
+
+  @@id([jobId, skillId])
+}
+
+model MaterialDetail {
+  id            Int          @id @default(autoincrement())
+  itemId        Int          @unique
+  item          Item         @relation(fields: [itemId], references: [id])
+  type          MaterialType
+}
+
+model Monster {
+  id          Int       @id @default(autoincrement())
+  creature    Creature  @relation(fields: [creatureId], references: [id])
+  creatureId  Int      @unique // 確保一對一關係
+  
+  drops       MonsterDrop[]
+  attackMode  AttackMode // 攻擊類型，主動或被動
+  monsterStage MonsterStage // 怪物階段
+  dungeonMonster DungeonMonster?
+  canCapture  Boolean    @default(true)
+  petEgg      Item?      @relation("MonsterToPetEgg", fields: [petEggId], references: [id])
+  petEggId    Int?
+}
+
+model MonsterDrop {
+  monsterId   Int
+  itemId      Int
+  monster     Monster   @relation(fields: [monsterId], references: [id])
+  item        Item      @relation(fields: [itemId], references: [id])
+  requiresBreak Boolean @default(false)
+  @@id([monsterId, itemId])
+}
+
+model Nation {
+  id       Int    @id @default(autoincrement())
+  name     String @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  areas    Area[]
+  collectionDetails  CollectionDetail[]
+}
+
+model ObtainMethod {
+  id          Int       @id @default(autoincrement())
+  type        ItemObtainType
+  description String?   // 例如 "擊敗精英怪物後低概率掉落"
+  areaId      Int?      // 可選，關聯到地區
+  area        Area?     @relation(fields: [areaId], references: [id])
+  // 透過中介表關聯
+  items       ItemObtainMethod[]
+}
+
+model Pet {
+  id          Int       @id @default(autoincrement())
+  creature    Creature  @relation(fields: [creatureId], references: [id])
+  creatureId  Int      @unique // 確保一對一關係
+  
+  obtainType  PetObtainType
+  obtainWay   String?
+  bodyType    BodyType
+  
+  skills   PetSkillLink[] // 更新為中介模型
+  
+  attributes PetAttribute[]
+  quality     ItemQuality
+  petEgg      Item      @relation("PetToEgg", fields: [petEggId], references: [id])
+  petEggId    Int
+  petEggDetail PetEggDetail? @relation("PetEggDetailRelation")
+}
+
+model PetAttribute {
+  id        Int        @id @default(autoincrement())
+  petId     Int
+  attribute Attribute
+  value Float
+  unit      UnitType?
+
+  pet       Pet        @relation(fields: [petId], references: [id])
+  @@unique([petId, attribute]) // 同一隻寵物不重複同一屬性
+}
+
+model PetEggDetail {
+  id      Int   @id @default(autoincrement())
+  itemId  Int   @unique
+  item    Item  @relation(fields: [itemId], references: [id])
+  petId   Int   @unique
+  pet     Pet   @relation("PetEggDetailRelation", fields: [petId], references: [id])
+}
+
+model PetEquipmentDetail {
+  id            Int              @id @default(autoincrement())
+  itemId        Int              @unique
+  item          Item             @relation(fields: [itemId], references: [id])
+  equipType     PetEquipmentType
+  requiredLevel Int
+  effects       PetEquipmentEffect[]
+  starBonuses   StarBonus[]
+}
+
+model PetEquipmentEffect {
+  id           Int         @id @default(autoincrement())      
+  effectType   EffectType  // 效果類型
+  target       Target?     // 目標，使用枚舉，可選
+  attribute    Attribute?  // 影響的屬性，使用枚舉，可選
+  baseValue    Float?
+  unit         UnitType?   // 使用 UnitType 枚舉規範單位
+  chance       Float?      // 機率（例如 15 表示 15%）
+  duration     Float?      // 持續時間（秒）
+  interval     Float?      // 間隔（例如每秒觸發的持續傷害）
+  stackLimit   Int?
+
+  equipmentDetail PetEquipmentDetail[]
+}
+
+model PetSkill {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String     // 技能描述，例如 "力量5%"
+  
+  // 標識技能類型
+  skillType   SkillType // 例如 ACTIVE 或 PASSIVE
+  skillCategory PetSkillCategory // 新增技能類別，區分戰鬥技能和融合技能
+  
+  pets        PetSkillLink[] // 更新為中介模型
+}
+
+model PetSkillLink {
+  petId      Int
+  petSkillId Int
+
+  pet        Pet       @relation(fields: [petId], references: [id])
+  petSkill   PetSkill  @relation(fields: [petSkillId], references: [id])
+
+  @@id([petId, petSkillId]) // 複合主鍵
+}
+
+model Quest {
+  id             Int               @id @default(autoincrement())
+  name           String            // 任務名稱
+  description    String?           // 任務敘述
+  requiredLevel  Int?              // 等級限制
+  rewardExp      Int?              // 獎勵經驗值
+  rewardMoney    Int?              // 獎勵金錢
+  timeLimit      Int?              // 任務時限(秒、分、或其他單位)
+  triggerItemId  Int?   @unique  // 一對一關聯時要加 @unique
+  triggerItem    Item?  @relation("TriggerItemToQuest", fields: [triggerItemId], references: [id])
+  
+  // 假設有 NPC 模型時，可用以下兩欄關聯
+  giverNpcId     Int?
+  receiverNpcId  Int?
+
+  // 前置任務(多對多自我關聯)
+  prerequisites  QuestPrerequisite[] @relation("QuestPrerequisiteQuest")  // 這個任務需要完成哪些前置任務
+  nextQuests     QuestPrerequisite[] @relation("QuestPrerequisitePre")    // 哪些任務把本任務當作前置
+
+  // 若要將「關鍵任務道具」或「一般任務道具」的資訊也放在這裡
+  questItemDetails QuestItemDetail[] 
+
+  // 獎勵物品（多對多關係）
+  questRewardItems QuestRewardItem[] 
+  isRepeatable    Boolean       @default(false)
+}
+
+model QuestItemDetail {
+  id       Int    @id @default(autoincrement())
+  itemId   Int    @unique
+  item     Item   @relation(fields: [itemId], references: [id])
+  
+  questId  Int
+  quest    Quest  @relation(fields: [questId], references: [id]) // 加入關聯
+
+  isKey    Boolean @default(false) // 是否為關鍵任務道具
+}
+
+model QuestPrerequisite {
+  questId         Int
+  prerequisiteId  Int
+
+  quest           Quest @relation("QuestPrerequisiteQuest", fields: [questId], references: [id])
+  prerequisite    Quest @relation("QuestPrerequisitePre", fields: [prerequisiteId], references: [id])
+
+  @@id([questId, prerequisiteId])
+}
+
+model QuestRewardItem {
+  questId   Int
+  itemId    Int
+  quantity  Int   // 獎勵物品數量
+
+  quest     Quest @relation(fields: [questId], references: [id])
+  item      Item  @relation(fields: [itemId], references: [id])
+
+  @@id([questId, itemId]) // 複合主鍵
+}
+
+model Race {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  jobs        Job[]
+}
+
+model RuneStoneDetail {
+  id            Int       @id @default(autoincrement())
+  itemId        Int       @unique
+  item          Item      @relation(fields: [itemId], references: [id])
+  slot          ArmorSlot // 使用相同的裝備槽位枚舉
+  stats         Json      // 符石提供的屬性加成
+}
+
+model Skill {
+  id           Int         @id @default(autoincrement())
+  name         String      @unique
+  stage        JobStage
+  lvMin        Int
+  lvMax        Int
+  lvChar       Int
+  baseCooldown Int?
+  atkType      AttackType
+  iconUrl      String?
+  skillType    SkillType
+  advancements SkillAdvancement[] @relation("SkillAdvancements") // 進階技能關聯
+  requiredBy   SkillAdvancement[] @relation("SkillRequirements")   // 反向要求技能關聯
+
+  jobSkills    JobSkill[]
+  levels       SkillLevel[]
+  @@index([name, stage])
+}
+
+model SkillAdvancement {
+  id              Int        @id @default(autoincrement())
+  skillId         Int        // 進階的技能ID
+  requiredLevel   Int        // 進階所需的最低等級
+  nextSkillId     Int?       // 進階後的技能ID（關聯到下一個技能）
+
+  skill           Skill      @relation("SkillAdvancements", fields: [skillId], references: [id])
+  nextSkill       Skill?     @relation("SkillRequirements", fields: [nextSkillId], references: [id])
+}
+
+model SkillEffect {
+  id           Int         @id @default(autoincrement())
+  skillLevelId Int         
+  skillLevel   SkillLevel  @relation(fields: [skillLevelId], references: [id], onDelete: Cascade)
+  effectType   EffectType  // 效果類型
+  target       Target?     // 目標，使用枚舉，可選
+  attribute    Attribute?  // 影響的屬性，使用枚舉，可選
+  baseValue    Float?
+  unit         UnitType?   // 使用 UnitType 枚舉規範單位
+  chance       Float?      // 機率（例如 15 表示 15%）
+  duration     Float?      // 持續時間（秒）
+  interval     Float?      // 間隔（例如每秒觸發的持續傷害）
+  stackLimit   Int?
+}
+
+model SkillLevel {
+  id          Int    @id @default(autoincrement())
+  skillId     Int
+  skill       Skill  @relation(fields: [skillId], references: [id])
+  level       Int    // Skill level (e.g. 1~10)
+  reqCharLv   Int    // Required character level (e.g. lv1reqcharlv, lv2reqcharlv, etc.)
+  description String // Skill description (e.g. lv1, lv2, etc.)
+  effects     SkillEffect[]
+  cost        Int    // Cost (e.g. lv1cost, lv2cost, etc.)
+  cooldown    Int    // Cooldown (e.g. lv1cd, lv2cd, etc.)
+  distance    Int    // Distance (e.g. distance1, distance2, etc.)
+  range       Int    // Range (e.g. range1, range2, etc.)
+}
+
+model StarBonus {
+  id             Int           @id @default(autoincrement())
+  starLevel      Int           // 1 => 一星, 2 => 二星, ...
+  description    String
+
+  weaponDetailId Int?
+  weaponDetail   WeaponDetail? @relation(fields: [weaponDetailId], references: [id])
+
+  armorDetailId  Int?
+  armorDetail    ArmorDetail?  @relation(fields: [armorDetailId], references: [id])
+
+  petEquipmentDetailId Int?
+  petEquipmentDetail PetEquipmentDetail? @relation(fields: [petEquipmentDetailId], references: [id])
+}
+
+model ToolDetail {
+  id            Int       @id @default(autoincrement())
+  itemId        Int       @unique
+  item          Item      @relation(fields: [itemId], references: [id])
+  type          ToolType
+  cooldown      Int?      // 使用冷卻時間
+  duration      Int?      // 效果持續時間
+}
+
+model WeaponDetail {
+  id            Int         @id @default(autoincrement())
+  itemId        Int         @unique
+  item          Item        @relation(fields: [itemId], references: [id])
+  weaponType    WeaponType
+  specialEffect       String?     // 特殊效果
+  attackType    AttackType
+  starBonuses   StarBonus[]
+}

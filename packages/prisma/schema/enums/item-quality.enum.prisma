@@ -1,0 +1,7 @@
+enum ItemQuality {
+  WHITE
+  GREEN
+  BLUE
+  PURPLE
+  GOLD
+}

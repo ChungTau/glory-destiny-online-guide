@@ -1,0 +1,9 @@
+model PetSkillLink {
+  petId      Int
+  petSkillId Int
+
+  pet        Pet       @relation(fields: [petId], references: [id])
+  petSkill   PetSkill  @relation(fields: [petSkillId], references: [id])
+
+  @@id([petId, petSkillId]) // 複合主鍵
+}

@@ -1,0 +1,4 @@
+enum SkillType {
+  ACTIVE    // 對應 '主動'
+  PASSIVE
+}

@@ -1,0 +1,13 @@
+model SkillLevel {
+  id          Int    @id @default(autoincrement())
+  skillId     Int
+  skill       Skill  @relation(fields: [skillId], references: [id])
+  level       Int    // Skill level (e.g. 1~10)
+  reqCharLv   Int    // Required character level (e.g. lv1reqcharlv, lv2reqcharlv, etc.)
+  description String // Skill description (e.g. lv1, lv2, etc.)
+  effects     SkillEffect[]
+  cost        Int    // Cost (e.g. lv1cost, lv2cost, etc.)
+  cooldown    Int    // Cooldown (e.g. lv1cd, lv2cd, etc.)
+  distance    Int    // Distance (e.g. distance1, distance2, etc.)
+  range       Int    // Range (e.g. range1, range2, etc.)
+}

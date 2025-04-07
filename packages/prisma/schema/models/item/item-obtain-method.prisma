@@ -1,0 +1,11 @@
+model ItemObtainMethod {
+  itemId        Int
+  obtainMethodId Int
+  item          Item        @relation(fields: [itemId], references: [id])
+  obtainMethod  ObtainMethod @relation(fields: [obtainMethodId], references: [id])
+  probability   Float?      // 掉落概率（例如 0.15 表示 15%）
+  minLevel      Int?        // 最低等級限制
+  maxQuantity   Int?        // 每次最大獲得數量
+
+  @@id([itemId, obtainMethodId])
+}

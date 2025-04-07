@@ -1,0 +1,15 @@
+model Creature {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  level       Int       @default(1)
+  areaId      Int?      // 外鍵，關聯到 Area
+  area        Area?     @relation(fields: [areaId], references: [id])
+  attackType  AttackType
+  bodyType    BodyType
+  description String?
+
+  monster     Monster?
+  pet         Pet?
+
+  @@index([name, level]) // 按名稱和等級查詢生物
+}
