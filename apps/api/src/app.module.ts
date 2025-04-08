@@ -29,7 +29,6 @@ import { NationModule } from './features/geography/nation/nation.module';
       name: 'example-queue', // 喺 AppModule 註冊隊列
     }),
     RedisModule,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     ServeStaticModule.forRoot({
       rootPath: join(
         __dirname,

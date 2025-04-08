@@ -9,7 +9,7 @@ const outputFile = path.join(schemaDir, 'schema.prisma');
 const datasource = `
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://user:password@postgres:5432/mydb?schema=public"
 }
 generator client {
   provider = "prisma-client-js"

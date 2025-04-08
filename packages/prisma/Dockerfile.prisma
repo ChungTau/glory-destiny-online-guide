@@ -6,8 +6,5 @@ COPY tsconfig.base.json ./
 COPY packages/prisma/package.json packages/prisma/
 RUN npm install -g pnpm && pnpm install --frozen-lockfile
 COPY packages/prisma ./packages/prisma
-RUN pnpm --filter=@glory-destiny-online-guide/prisma run merge-prisma
-RUN pnpm --filter=@glory-destiny-online-guide/prisma run generate
-RUN pnpm --filter=@glory-destiny-online-guide/prisma run generate-entity-includes
-RUN pnpm --filter=@glory-destiny-online-guide/prisma run generate-exports
-CMD ["tail", "-f", "/dev/null"]
+RUN pnpm --filter=@glory-destiny-online-guide/prisma run build
+CMD ["pnpm", "--filter=@glory-destiny-online-guide/prisma", "run", "start"]
