@@ -13,14 +13,14 @@ This project provides a guide for *Glory Destiny Online*, built with Prisma, Nes
 ### 1. Create the `.env` File
 
 In the root folder (`/workspaces/glory-destiny-online-guide/`), create a `.env` file with the following content:
-DATABASE_URL="postgresql://user:password@localhost:5432/mydb?schema=public"
+```DATABASE_URL="postgresql://user:password@localhost:5432/mydb?schema=public"```
 
 - **DATABASE_URL**: This is required for Prisma to connect to the PostgreSQL database. Adjust the `user`, `password`, `localhost`, `mydb`, and `schema` values if you use different credentials or database settings.
 
 ### 2. Install Dependencies
 
 Run the following command in the root folder to install all project dependencies:
-pnpm install
+```pnpm install```
 
 
 This will set up the necessary Node.js packages for the project.
@@ -28,7 +28,7 @@ This will set up the necessary Node.js packages for the project.
 ### 3. Run the Project
 
 Use Docker Compose to build and start the services:
-docker-compose -f docker-compose.dev.yaml up --build --watch
+```docker-compose -f docker-compose.dev.yaml up --build --watch```
 
 
 - **`--build`**: Ensures the Docker images are built from scratch.
