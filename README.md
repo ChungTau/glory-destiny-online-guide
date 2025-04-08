@@ -13,6 +13,7 @@ This project provides a guide for *Glory Destiny Online*, built with Prisma, Nes
 ### 1. Create the `.env` File
 
 In the root folder (`/workspaces/glory-destiny-online-guide/`), create a `.env` file with the following content:
+
 ```DATABASE_URL="postgresql://user:password@localhost:5432/mydb?schema=public"```
 
 - **DATABASE_URL**: This is required for Prisma to connect to the PostgreSQL database. Adjust the `user`, `password`, `localhost`, `mydb`, and `schema` values if you use different credentials or database settings.

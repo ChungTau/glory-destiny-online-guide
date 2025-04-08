@@ -26,6 +26,7 @@ export interface PaginatedResult<T> {
 @Injectable()
 export abstract class BaseService<
   T extends Identifiable,
+  W extends Identifiable,
   K extends Prisma.ModelName,
   CreateDto = any,
   UpdateDto = any,
@@ -125,9 +126,9 @@ export abstract class BaseService<
     }
   }
 
-  async findOne(id: number, include?: I): Promise<T> {
+  async findOne(id: number, include?: I): Promise<T|W> {
     const cacheKey = this.getCacheKey(id, include);
-    const cached = await this.getFromCache<T>(cacheKey);
+    const cached = await this.getFromCache<T|W>(cacheKey);
     if (cached) return cached;
 
     try {
@@ -144,10 +145,10 @@ export abstract class BaseService<
     }
   }
 
-  async findMany(params: QueryParams & { include?: I } = {}): Promise<T[]> {
+  async findMany(params: QueryParams & { include?: I } = {}): Promise<T[]|W[]> {
     const { where, sort, order, include } = params;
     const cacheKey = this.getCacheKey({ where, sort, order }, include);
-    const cached = await this.getFromCache<T[]>(cacheKey);
+    const cached = await this.getFromCache<T[]|W[]>(cacheKey);
     if (cached) return cached;
 
     try {
@@ -165,7 +166,7 @@ export abstract class BaseService<
 
   async findManyPaginated(
     params: PaginatedQueryParams & { include?: I } = {},
-  ): Promise<PaginatedResult<T>> {
+  ): Promise<PaginatedResult<T|W>> {
     const { page = 1, limit = 10, sort, order, where, include } = params;
     if (page < 1 || limit < 1)
       throw new BadRequestException('page 同 limit 必須大於 0');
@@ -174,7 +175,7 @@ export abstract class BaseService<
       { page, limit, sort, order, where },
       include,
     );
-    const cached = await this.getFromCache<PaginatedResult<T>>(cacheKey);
+    const cached = await this.getFromCache<PaginatedResult<T|W>>(cacheKey);
     if (cached) return cached;
 
     try {
@@ -188,7 +189,7 @@ export abstract class BaseService<
         }),
         this.prisma[String(this.entityName)].count({ where }),
       ]);
-      const result: PaginatedResult<T> = { data, total };
+      const result: PaginatedResult<T|W> = { data, total };
       await this.setToCache(cacheKey, result);
       return result;
     } catch (error) {

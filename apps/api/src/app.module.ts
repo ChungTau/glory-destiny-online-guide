@@ -1,56 +1,34 @@
-// apps/api/src/app.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PrismaService } from './core/prisma/prisma.service';
+import { PrismaModule } from './core/prisma/prisma.module';
 import { BullModule } from '@nestjs/bull';
-import { ExampleProcessor } from './example.processor';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { ExpressAdapter } from '@bull-board/express';
-import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { RedisModule } from './core/redis/redis.module';
 import { redisConfig } from './core/redis/redis.config';
-import { NationModule } from './features/geography/nation/nation.module';
+import { FeatureModule } from './features/feature.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
+      isGlobal: true, // 加呢行，設為全局
     }),
     BullModule.forRootAsync({
-      imports: [ConfigModule],
       useFactory: (configService: ConfigService) => redisConfig(configService),
       inject: [ConfigService],
     }),
-    BullModule.registerQueue({
-      name: 'example-queue', // 喺 AppModule 註冊隊列
-    }),
     RedisModule,
     ServeStaticModule.forRoot({
-      rootPath: join(
-        __dirname,
-        '..',
-        'node_modules',
-        '@bull-board',
-        'ui',
-        'dist',
-      ),
+      rootPath: join(__dirname, '..', 'node_modules', '@bull-board', 'ui', 'dist'),
       serveRoot: '/queues',
     } as const),
-    BullBoardModule.forRoot({
-      route: '/queues',
-      adapter: ExpressAdapter as any,
-    }),
-    BullBoardModule.forFeature({
-      name: 'example-queue',
-      adapter: BullAdapter as any,
-    }),
-    NationModule,
+    BullBoardModule.forRoot({ route: '/queues', adapter: ExpressAdapter as any }),
+    PrismaModule,
+    FeatureModule
   ],
-  controllers: [AppController],
-  providers: [AppService, PrismaService, ExampleProcessor],
+  controllers: [],
 })
 export class AppModule {}

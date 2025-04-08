@@ -5,38 +5,30 @@ import {
   OnModuleDestroy,
   Logger,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
-import { redisConfig } from './redis.config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
   private readonly redis: Redis;
   private readonly logger = new Logger(RedisService.name);
 
-  constructor(
-    private configService: ConfigService,
-    @InjectQueue('example-queue') private exampleQueue: Queue,
-  ) {
-    this.redis =
-      this.exampleQueue.client.redis || new Redis(redisConfig(configService));
+  constructor(private configService: ConfigService) {
+    this.redis = new Redis({
+      host: this.configService.get<string>('REDIS_HOST', 'redis'),
+      port: this.configService.get<number>('REDIS_PORT', 6379),
+      password: this.configService.get<string>('REDIS_PASSWORD'),
+      db: this.configService.get<number>('REDIS_DB', 0),
+    });
   }
 
   async onModuleInit() {
     try {
       const pong = await this.redis.ping();
       this.logger.log('Redis 連線成功: ' + pong);
-    } catch (error: unknown) {
-      // 用 unknown
-      if (error instanceof Error) {
-        this.logger.error('Redis 連線失敗', error.stack);
-        throw new Error('Redis 連線失敗');
-      } else {
-        this.logger.error('Redis 連線失敗', '未知錯誤');
-        throw new Error('Redis 連線失敗');
-      }
+    } catch (error) {
+      this.logger.error('Redis 連線失敗', error instanceof Error ? error.stack : undefined);
+      throw new Error('Redis 連線失敗');
     }
   }
 
@@ -45,6 +37,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     this.logger.log('Redis 已斷開連線');
   }
 
+  // 其他方法保持不變
   async ping(): Promise<string> {
     return this.redis.ping();
   }

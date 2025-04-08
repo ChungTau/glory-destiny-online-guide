@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { NationService } from './nation.service';
-import { NationController } from './nation.controller';
+import { RaceService } from './race.service';
+import { RaceController } from './race.controller';
 import { RedisModule } from 'src/core/redis/redis.module';
 import { PrismaModule } from 'src/core/prisma/prisma.module';
 
 @Module({
   imports: [RedisModule, PrismaModule],
-  providers: [NationService],
-  controllers: [NationController],
+  providers: [RaceService],
+  controllers: [RaceController],
 })
-export class NationModule {}
+export class RaceModule {}
