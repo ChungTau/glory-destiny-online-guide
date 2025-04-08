@@ -20,6 +20,7 @@ In the root folder (`/workspaces/glory-destiny-online-guide/`), create a `.env` 
 ### 2. Install Dependencies
 
 Run the following command in the root folder to install all project dependencies:
+
 ```pnpm install```
 
 
@@ -28,6 +29,7 @@ This will set up the necessary Node.js packages for the project.
 ### 3. Run the Project
 
 Use Docker Compose to build and start the services:
+
 ```docker-compose -f docker-compose.dev.yaml up --build --watch```
 
 
