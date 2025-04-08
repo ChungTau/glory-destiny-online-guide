@@ -20,6 +20,7 @@ DATABASE_URL="postgresql://user:password@localhost:5432/mydb?schema=public"
 ### 2. Install Dependencies
 
 Run the following command in the root folder to install all project dependencies:
+pnpm install
 
 
 This will set up the necessary Node.js packages for the project.
@@ -27,6 +28,7 @@ This will set up the necessary Node.js packages for the project.
 ### 3. Run the Project
 
 Use Docker Compose to build and start the services:
+docker-compose -f docker-compose.dev.yaml up --build --watch
 
 
 - **`--build`**: Ensures the Docker images are built from scratch.
