@@ -19,6 +19,7 @@ import {
   EntityCreateManyInput,
   EntityUpdateManyInput,
   Identifiable,
+  EntityWhereInput,
 } from '../../common/types/prisma.types';
 
 export interface PaginatedResult<T> {
@@ -45,18 +46,17 @@ export abstract class BaseService<
   }
 
   protected getCacheKey(
-    id: string | number | QueryParams | PaginatedQueryParams,
+    id: string | number | QueryParams | PaginatedQueryParams | EntityWhereInput<K> | undefined, // 明確加 undefined
     include?: I,
     select?: S,
     suffix?: string,
   ): string {
-    const namespace = `${process.env.APP_NAME || 'GDO-Guide'}:${process.env.NODE_ENV || 'dev'}`;
-    const idStr = typeof id === 'object' ? JSON.stringify(id) : id.toString();
+    const idStr = id === undefined ? '' : typeof id === 'object' ? JSON.stringify(id) : id.toString();
     const includeStr = include ? `:include:${JSON.stringify(include)}` : '';
     const selectStr = select ? `:select:${JSON.stringify(select)}` : '';
     return suffix
-      ? `${namespace}:${String(this.entityName)}:${idStr}${includeStr}${selectStr}:${suffix}`
-      : `${namespace}:${String(this.entityName)}:${idStr}${includeStr}${selectStr}`;
+      ? `${String(this.entityName)}:${idStr}${includeStr}${selectStr}:${suffix}`
+      : `${String(this.entityName)}:${idStr}${includeStr}${selectStr}`;
   }
 
   protected async getFromCache<TData>(key: string): Promise<TData | null> {
@@ -82,7 +82,7 @@ export abstract class BaseService<
   }
 
   protected async invalidateCache(
-    idOrQuery: number | string | QueryParams | PaginatedQueryParams,
+    idOrQuery: number | string | QueryParams | PaginatedQueryParams | EntityWhereInput<K> | undefined,
     wildcard = false,
   ): Promise<void> {
     if (!this.redis) {
@@ -93,7 +93,7 @@ export abstract class BaseService<
     try {
       if (wildcard) {
         // 用更廣泛嘅 pattern，只保留 entityName 前綴
-        const pattern = `${process.env.APP_NAME || 'GDO-Guide'}:${process.env.NODE_ENV || 'dev'}:${String(this.entityName)}:*`;
+        const pattern = `${String(this.entityName)}:*`;
         this.logger.debug(`準備用 wildcard 清除快取，pattern: ${pattern}`);
         const keys = await this.redis.keys(pattern);
         
@@ -199,6 +199,7 @@ export abstract class BaseService<
 
   async findManyPaginated(params: PaginatedQueryParams & { include?: I; select?: S } = {}): Promise<PaginatedResult<T>> {
     const { page = 1, limit = 10, sort, order, where, include, select } = params;
+    this.logger.debug(`findManyPaginated 接收到嘅 where: ${JSON.stringify(where)}`);
     if (page < 1 || limit < 1) throw new BadRequestException('page 同 limit 必須大於 0');
     const skip = (page - 1) * limit;
     const cacheKey = this.getCacheKey({ page, limit, sort, order, where }, include, select);
@@ -238,7 +239,7 @@ export abstract class BaseService<
     }
   }
 
-  async updateMany(where: Record<string, any>, data: EntityUpdateManyInput<K>): Promise<Prisma.BatchPayload> {
+  async updateMany(where: EntityWhereInput<K>, data: EntityUpdateManyInput<K>): Promise<Prisma.BatchPayload> {
     try {
       const result = await this.prisma[String(this.entityName)].updateMany({
         where,
@@ -277,7 +278,7 @@ export abstract class BaseService<
     }
   }
 
-  async removeMany(where: Record<string, any>): Promise<Prisma.BatchPayload> {
+  async removeMany(where: EntityWhereInput<K>): Promise<Prisma.BatchPayload> {
     try {
       const result = await this.prisma[String(this.entityName)].deleteMany({ where });
       await this.invalidateCache(where);

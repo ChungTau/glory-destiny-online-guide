@@ -25,6 +25,10 @@ export type EntityUpdateManyInput<T extends Prisma.ModelName> = {
   [K in T]: Prisma.TypeMap['model'][K]['operations']['updateMany']['args']['data'];
 }[T];
 
+export type EntityWhereInput<T extends Prisma.ModelName> = {
+  [K in T]: Prisma.TypeMap['model'][K]['operations']['findMany']['args']['where'];
+}[T];
+
 // 查詢結果類型（帶 include 或 select）
 export type EntityPayload<
   T extends Prisma.ModelName,

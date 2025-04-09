@@ -20,6 +20,7 @@ import {
   EntityCreateManyInput,
   EntityUpdateManyInput,
   Identifiable,
+  EntityWhereInput,
 } from '../../common/types/prisma.types';
 
 @Controller()
@@ -61,13 +62,15 @@ export abstract class BaseController<
     @Query('page', new ParseIntPipe({ optional: true })) page = 1,
     @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
     @Query() query: PaginatedQueryParams,
+    @Query('where') whereStr?: string,
     @Query('include') includeStr?: string,
     @Query('select') selectStr?: string,
   ): Promise<PaginatedResult<T>> {
     const include = this.parseInclude(includeStr);
     const select = this.parseSelect(selectStr);
+    const where = this.parseWhere(whereStr);
     if (include && select) throw new BadRequestException('唔可以同時用 include 同 select');
-    return this.service.findManyPaginated({ ...query, page, limit, include, select });
+    return this.service.findManyPaginated({ ...query, page, limit, where, include, select });
   }
 
   @Get(':id')
@@ -146,12 +149,12 @@ export abstract class BaseController<
     }
   }
 
-  protected parseWhere(whereStr: string): Record<string, any> {
-    if (!whereStr) throw new BadRequestException('where 參數係必須嘅');
+  protected parseWhere(whereStr?: string): EntityWhereInput<K> {
+    if (!whereStr) return undefined;
     try {
-      return JSON.parse(whereStr) as Record<string, any>;
+      return JSON.parse(whereStr) as EntityWhereInput<K>;
     } catch (error) {
-      throw new BadRequestException('無效嘅 where 參數');
+      throw new BadRequestException('無效嘅 where 參數', whereStr);
     }
   }
 }
