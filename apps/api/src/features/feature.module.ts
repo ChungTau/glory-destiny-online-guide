@@ -9,7 +9,22 @@ import { ItemModule } from './item/item.module';
 import { SkillModule } from './skill/skill.module';
 
 @Module({
-  imports: [CoreModule, GeographyModule, RoleModule, CreatureModule, QuestModule, ItemModule, SkillModule],
-  exports: [GeographyModule, RoleModule, CreatureModule, QuestModule, ItemModule, SkillModule],
+  imports: [
+    CoreModule,
+    GeographyModule,
+    RoleModule,
+    CreatureModule,
+    QuestModule,
+    ItemModule,
+    SkillModule,
+  ],
+  exports: [
+    GeographyModule,
+    RoleModule,
+    CreatureModule,
+    QuestModule,
+    ItemModule,
+    SkillModule,
+  ],
 })
-export class FeatureModule { }
+export class FeatureModule {}

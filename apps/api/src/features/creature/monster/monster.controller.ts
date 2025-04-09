@@ -1,4 +1,4 @@
-// apps/api/src/features/geography/monster/monster.controller.ts
+// apps/api/src/features/geography/dungeonMonster/dungeonMonster.controller.ts
 import { Controller, Inject } from '@nestjs/common';
 import { BaseController } from 'src/core/base/base.controller';
 import { Prisma } from '@glory-destiny-online-guide/prisma';

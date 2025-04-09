@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { PrismaModule } from './core/prisma/prisma.module';
 import { BullModule } from '@nestjs/bull';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { ExpressAdapter } from '@bull-board/express';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { RedisModule } from './core/redis/redis.module';
 import { redisConfig } from './core/redis/redis.config';
 import { FeatureModule } from './features/feature.module';
 import { CoreModule } from './core/core.module';
