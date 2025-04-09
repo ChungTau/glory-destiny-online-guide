@@ -1,10 +1,10 @@
 // apps/api/src/core/base-service.factory.ts
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
-import { RedisService } from './redis/redis.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { RedisService } from '../redis/redis.service';
 import { BaseService } from './base.service';
 import { Prisma } from '@glory-destiny-online-guide/prisma';
-import { EntityPayloadWithInclude } from '../common/types/prisma.types';
+import { EntityPayloadWithInclude } from '../../common/types/prisma.types';
 
 @Injectable()
 export class BaseServiceFactory {

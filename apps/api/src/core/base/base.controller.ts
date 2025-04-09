@@ -11,15 +11,13 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { BaseService, PaginatedResult} from './base.service';
-import { PaginatedQueryParams } from '../common/dto/query-params.dto';
+import { PaginatedQueryParams } from '../../common/dto/query-params.dto';
 import { Prisma } from '@glory-destiny-online-guide/prisma';
 import {
   EntityCreateInput,
   EntityUpdateInput,
-  EntityPayloadWithInclude,
-  EntityPayloadWithSelect,
   Identifiable
-} from '../common/types/prisma.types';
+} from '../../common/types/prisma.types';
 
 @Controller()
 export abstract class BaseController<

@@ -7,17 +7,17 @@ import {
   InternalServerErrorException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
-import { RedisService } from './redis/redis.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { RedisService } from '../redis/redis.service';
 import {
   QueryParams,
   PaginatedQueryParams,
-} from '../common/dto/query-params.dto';
+} from '../../common/dto/query-params.dto';
 import {
   EntityCreateInput,
   EntityUpdateInput,
   Identifiable,
-} from '../common/types/prisma.types';
+} from '../../common/types/prisma.types';
 
 export interface PaginatedResult<T> {
   data: T[];

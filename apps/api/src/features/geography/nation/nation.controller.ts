@@ -1,6 +1,6 @@
 // apps/api/src/features/geography/nation/nation.controller.ts
 import { Controller, Inject } from '@nestjs/common';
-import { BaseController } from 'src/core/base.controller';
+import { BaseController } from 'src/core/base/base.controller';
 import { Prisma } from '@glory-destiny-online-guide/prisma';
 import { EntityPayloadWithInclude } from 'src/common/types/prisma.types';
 

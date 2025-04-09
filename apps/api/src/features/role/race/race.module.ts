@@ -2,8 +2,7 @@
 import { Module } from '@nestjs/common';
 import { RaceController } from './race.controller';
 import { CustomRaceService } from './race.service'; // 自定義服務改名
-import { BaseModule } from 'src/core/base.module';
-import { provideBaseService } from 'src/core/base.utils';
+import { provideBaseService, BaseModule } from 'src/core/base';
 import { Prisma } from '@glory-destiny-online-guide/prisma';
 
 @Module({
