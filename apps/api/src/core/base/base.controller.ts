@@ -58,6 +58,8 @@ export abstract class BaseController<
 
   @Get()
   async findAll(
+    @Query('page', new ParseIntPipe({ optional: true })) page = 1,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
     @Query() query: PaginatedQueryParams,
     @Query('include') includeStr?: string,
     @Query('select') selectStr?: string,
@@ -65,7 +67,7 @@ export abstract class BaseController<
     const include = this.parseInclude(includeStr);
     const select = this.parseSelect(selectStr);
     if (include && select) throw new BadRequestException('唔可以同時用 include 同 select');
-    return this.service.findManyPaginated({ ...query, include, select });
+    return this.service.findManyPaginated({ ...query, page, limit, include, select });
   }
 
   @Get(':id')
