@@ -4,6 +4,6 @@ import { PrismaService } from 'src/core/prisma/prisma.service';
 import { RedisService } from 'src/core/redis/redis.service';
 
 @Injectable()
-export class JobService {
+export class CustomJobService {
   constructor(private prisma: PrismaService, private redis: RedisService) {}
 }

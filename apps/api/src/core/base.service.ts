@@ -34,7 +34,7 @@ export abstract class BaseService<
   protected readonly logger: Logger;
   protected readonly prisma: PrismaService;
   protected readonly redis?: RedisService;
-  protected abstract readonly entityName: K;
+  public abstract readonly entityName: K;
 
   constructor(prisma: PrismaService, redis?: RedisService) {
     this.prisma = prisma;

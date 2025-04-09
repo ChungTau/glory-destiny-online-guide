@@ -4,7 +4,7 @@ import { PrismaService } from 'src/core/prisma/prisma.service';
 import { RedisService } from 'src/core/redis/redis.service';
 
 @Injectable()
-export class AreaService {
+export class CustomAreaService {
   constructor(private prisma: PrismaService, private redis: RedisService) {}
 
   // Custom methods

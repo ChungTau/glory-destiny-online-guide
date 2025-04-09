@@ -8,11 +8,10 @@
   "scripts": {
     "merge-prisma": "ts-node --transpile-only scripts/merge-prisma.ts",
     "generate": "prisma generate --schema=./schema/schema.prisma",
-    "generate-entity-includes": "ts-node --transpile-only scripts/generate-entity-include.ts",
     "generate-exports": "ts-node --transpile-only scripts/generate-exports.ts",
     "migrate:dev": "prisma migrate dev --schema=./schema/schema.prisma",
     "migrate:deploy": "prisma migrate deploy --schema=./schema/schema.prisma",
-    "build": "pnpm run merge-prisma && pnpm run generate && pnpm run generate-entity-includes && pnpm run generate-exports",
+    "build": "pnpm run merge-prisma && pnpm run generate && pnpm run generate-exports",
     "start": "pnpm run migrate:deploy",
     "watch": "ts-node-dev --respawn --watch schema/enums,schema/models -- scripts/merge-prisma.ts"
   },
