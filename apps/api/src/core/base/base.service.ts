@@ -16,6 +16,8 @@ import {
 import {
   EntityCreateInput,
   EntityUpdateInput,
+  EntityCreateManyInput,
+  EntityUpdateManyInput,
   Identifiable,
 } from '../../common/types/prisma.types';
 
@@ -83,35 +85,76 @@ export abstract class BaseService<
     idOrQuery: number | string | QueryParams | PaginatedQueryParams,
     wildcard = false,
   ): Promise<void> {
-    if (!this.redis) return;
+    if (!this.redis) {
+      this.logger.debug('無 Redis 實例，跳過快取失效');
+      return;
+    }
+
     try {
       if (wildcard) {
-        const pattern = this.getCacheKey(idOrQuery) + '*';
+        // 用更廣泛嘅 pattern，只保留 entityName 前綴
+        const pattern = `${process.env.APP_NAME || 'GDO-Guide'}:${process.env.NODE_ENV || 'dev'}:${String(this.entityName)}:*`;
+        this.logger.debug(`準備用 wildcard 清除快取，pattern: ${pattern}`);
         const keys = await this.redis.keys(pattern);
-        if (keys.length > 0) await this.redis.del(keys);
+        
+        if (keys.length > 0) {
+          this.logger.debug(`搵到 ${keys.length} 個匹配嘅快取 key: ${keys.join(', ')}`);
+          await this.redis.del(keys);
+          this.logger.debug(`成功清除 ${keys.length} 個快取 key`);
+        } else {
+          this.logger.debug(`無搵到匹配 ${pattern} 嘅快取 key，無需清除`);
+        }
       } else {
         const key = this.getCacheKey(idOrQuery);
+        this.logger.debug(`準備清除單個快取 key: ${key}`);
         await this.redis.del(key);
+        this.logger.debug(`成功清除快取 key: ${key}`);
       }
     } catch (error) {
-      this.logger.error(`快取清除失敗`, error instanceof Error ? error.stack : undefined);
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        `快取清除失敗，idOrQuery: ${JSON.stringify(idOrQuery)}, wildcard: ${wildcard}, 錯誤: ${errorMsg}`,
+        error instanceof Error ? error.stack : undefined,
+      );
     }
   }
 
   async createOne(data: EntityCreateInput<K>): Promise<T> {
     try {
       const result = await this.prisma[String(this.entityName)].create({ data });
+      // 用 wildcard 清除所有相關快取
+      await this.invalidateCache('', true); // 改用空字符串，確保 pattern 係 GDO-Guide:development:Nation:*
       return result as T;
     } catch (error) {
       this.handlePrismaError(error, '創建單個');
     }
   }
 
-  async createMany(data: EntityCreateInput<K>[]): Promise<Prisma.BatchPayload> {
+  async bulkCreate(data: EntityCreateInput<K>[]): Promise<Prisma.BatchPayload> {
     try {
-      return await this.prisma[String(this.entityName)].createMany({ data });
+      const result = await this.prisma[String(this.entityName)].createMany({ data });
+      await this.invalidateCache('', true); // 改用空字符串
+      return result;
     } catch (error) {
       this.handlePrismaError(error, '批量創建');
+    }
+  }
+
+  async createMany(
+    data: EntityCreateManyInput<K>,
+    include?: I,
+    select?: S,
+  ): Promise<T[]> {
+    try {
+      const result = await this.prisma[String(this.entityName)].createMany({
+        data,
+        include,
+        select,
+      });
+      await this.invalidateCache('', true); // 改用空字符串
+      return result as T[];
+    } catch (error) {
+      this.handlePrismaError(error, '批量創建並返回記錄');
     }
   }
 
@@ -195,7 +238,7 @@ export abstract class BaseService<
     }
   }
 
-  async updateMany(where: Record<string, any>, data: EntityUpdateInput<K>): Promise<Prisma.BatchPayload> {
+  async updateMany(where: Record<string, any>, data: EntityUpdateManyInput<K>): Promise<Prisma.BatchPayload> {
     try {
       const result = await this.prisma[String(this.entityName)].updateMany({
         where,

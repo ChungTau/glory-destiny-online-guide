@@ -1,4 +1,4 @@
-// apps/api/src/core/base.controller.ts
+// apps/api/src/core/base/base.controller.ts
 import {
   Controller,
   Get,
@@ -9,28 +9,51 @@ import {
   Param,
   Query,
   BadRequestException,
+  ParseIntPipe,
 } from '@nestjs/common';
-import { BaseService, PaginatedResult} from './base.service';
+import { BaseService, PaginatedResult } from './base.service';
 import { PaginatedQueryParams } from '../../common/dto/query-params.dto';
 import { Prisma } from '@glory-destiny-online-guide/prisma';
 import {
   EntityCreateInput,
   EntityUpdateInput,
-  Identifiable
+  EntityCreateManyInput,
+  EntityUpdateManyInput,
+  Identifiable,
 } from '../../common/types/prisma.types';
 
 @Controller()
 export abstract class BaseController<
   T extends Identifiable,
   K extends Prisma.ModelName,
-  I extends Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include'] = {}, // 用 Prisma Include 類型
-  S extends Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['select'] = {}, // 用 Prisma Select 類型
+  I extends Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include'] = {},
+  S extends Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['select'] = {},
 > {
   protected abstract readonly service: BaseService<T, K, I, S>;
 
   @Post()
   async create(@Body() createDto: EntityCreateInput<K>): Promise<T> {
     return this.service.createOne(createDto);
+  }
+
+  @Post('bulk')
+  async bulkCreate(@Body() createDtos: EntityCreateInput<K>[]): Promise<Prisma.BatchPayload> {
+    if (!Array.isArray(createDtos) || createDtos.length === 0) {
+      throw new BadRequestException('createDtos 必須係非空數組');
+    }
+    return this.service.bulkCreate(createDtos);
+  }
+
+  @Post('many')
+  async createMany(
+    @Body() createManyDto: EntityCreateManyInput<K>,
+    @Query('include') includeStr?: string,
+    @Query('select') selectStr?: string,
+  ): Promise<T[]> {
+    const include = this.parseInclude(includeStr);
+    const select = this.parseSelect(selectStr);
+    if (include && select) throw new BadRequestException('唔可以同時用 include 同 select');
+    return this.service.createMany(createManyDto, include, select);
   }
 
   @Get()
@@ -47,27 +70,60 @@ export abstract class BaseController<
 
   @Get(':id')
   async findOne(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Query('include') includeStr?: string,
     @Query('select') selectStr?: string,
   ): Promise<T> {
     const include = this.parseInclude(includeStr);
     const select = this.parseSelect(selectStr);
     if (include && select) throw new BadRequestException('唔可以同時用 include 同 select');
-    return this.service.findOne(+id, include, select);
+    return this.service.findOne(id, include, select);
+  }
+
+  @Patch()
+  async updateMany(
+    @Query('where') whereStr: string,
+    @Body() updateDto: EntityUpdateManyInput<K>,
+  ): Promise<Prisma.BatchPayload> {
+    const where = this.parseWhere(whereStr);
+    return this.service.updateMany(where, updateDto);
+  }
+
+  @Patch('bulk')
+  async bulkUpdate(
+    @Body() updates: { id: number; data: EntityUpdateInput<K> }[],
+  ): Promise<T[]> {
+    if (!Array.isArray(updates) || updates.length === 0) {
+      throw new BadRequestException('updates 必須係非空數組');
+    }
+    return this.service.bulkUpdate(updates);
   }
 
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateDto: EntityUpdateInput<K>,
   ): Promise<T> {
-    return this.service.updateOne(+id, updateDto);
+    return this.service.updateOne(id, updateDto);
+  }
+
+  @Delete()
+  async removeMany(@Query('where') whereStr: string): Promise<Prisma.BatchPayload> {
+    const where = this.parseWhere(whereStr);
+    return this.service.removeMany(where);
+  }
+
+  @Delete('bulk')
+  async bulkRemove(@Body() ids: number[]): Promise<Prisma.BatchPayload> {
+    if (!Array.isArray(ids) || ids.length === 0) {
+      throw new BadRequestException('ids 必須係非空數組');
+    }
+    return this.service.bulkRemove(ids);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<T> {
-    return this.service.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<T> {
+    return this.service.remove(id);
   }
 
   protected parseInclude(includeStr?: string): I | undefined {
@@ -85,6 +141,15 @@ export abstract class BaseController<
       return JSON.parse(selectStr) as S;
     } catch (error) {
       throw new BadRequestException('無效嘅 select 參數');
+    }
+  }
+
+  protected parseWhere(whereStr: string): Record<string, any> {
+    if (!whereStr) throw new BadRequestException('where 參數係必須嘅');
+    try {
+      return JSON.parse(whereStr) as Record<string, any>;
+    } catch (error) {
+      throw new BadRequestException('無效嘅 where 參數');
     }
   }
 }
