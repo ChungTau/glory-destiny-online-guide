@@ -1,25 +1,20 @@
 // apps/api/src/features/geography/nation/nation.controller.ts
-import { Controller } from '@nestjs/common';
-import { NationService } from './nation.service';
-import { NationCreateDto } from './dto/nation-create.dto';
-import { NationUpdateDto } from './dto/nation-update.dto';
-import { Nation, NationInclude, Prisma } from '@glory-destiny-online-guide/prisma';
+import { Controller, Inject } from '@nestjs/common';
 import { BaseController } from 'src/core/base.controller';
-import { NationResponseDto } from './dto/nation-response.dto';
+import { Prisma } from '@glory-destiny-online-guide/prisma';
+import { EntityPayloadWithInclude } from 'src/common/types/prisma.types';
 
 @Controller('nations')
 export class NationController extends BaseController<
-  Nation,
-  NationResponseDto,
+  EntityPayloadWithInclude<typeof Prisma.ModelName.Nation, Prisma.NationInclude>,
   typeof Prisma.ModelName.Nation,
-  NationCreateDto,
-  NationUpdateDto,
-  NationInclude
+  Prisma.NationInclude,
+  Prisma.NationSelect
 > {
-  protected readonly service: NationService; // 只聲明類型，唔賦值
-
-  constructor(private readonly nationService: NationService) {
+  constructor(
+    @Inject(`${Prisma.ModelName.Nation}Service`)
+    protected readonly service: any, // 用動態生成嘅 Service
+  ) {
     super();
-    this.service = this.nationService; // 喺 constructor 入面賦值
   }
 }

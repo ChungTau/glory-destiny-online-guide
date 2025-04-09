@@ -1,12 +1,13 @@
+// apps/api/src/features/geography/job/job.module.ts
 import { Module } from '@nestjs/common';
-import { JobService } from './job.service';
 import { JobController } from './job.controller';
-import { RedisModule } from 'src/core/redis/redis.module';
-import { PrismaModule } from 'src/core/prisma/prisma.module';
+import { JobService } from './job.service';
+import { BaseModule } from 'src/core/base.module';
+import { Prisma } from '@glory-destiny-online-guide/prisma';
 
 @Module({
-  imports: [RedisModule, PrismaModule],
-  providers: [JobService],
+  imports: [BaseModule.forEntity(Prisma.ModelName.Job, [JobService])],
   controllers: [JobController],
+  providers: [JobService],
 })
 export class JobModule {}

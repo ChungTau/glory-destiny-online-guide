@@ -1,12 +1,13 @@
+// apps/api/src/features/geography/area/area.module.ts
 import { Module } from '@nestjs/common';
-import { AreaService } from './area.service';
 import { AreaController } from './area.controller';
-import { RedisModule } from 'src/core/redis/redis.module';
-import { PrismaModule } from 'src/core/prisma/prisma.module';
+import { AreaService } from './area.service';
+import { BaseModule } from 'src/core/base.module';
+import { Prisma } from '@glory-destiny-online-guide/prisma';
 
 @Module({
-  imports: [RedisModule, PrismaModule],
+  imports: [BaseModule.forEntity(Prisma.ModelName.Area, [AreaService])],
+  controllers: [AreaController],
   providers: [AreaService],
-  controllers: [AreaController]
 })
 export class AreaModule {}

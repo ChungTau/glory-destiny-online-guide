@@ -1,25 +1,20 @@
 // apps/api/src/features/geography/job/job.controller.ts
-import { Controller } from '@nestjs/common';
-import { JobService } from './job.service';
-import { JobCreateDto } from './dto/job-create.dto';
-import { JobUpdateDto } from './dto/job-update.dto';
-import { Job, JobInclude, Prisma } from '@glory-destiny-online-guide/prisma';
+import { Controller, Inject } from '@nestjs/common';
 import { BaseController } from 'src/core/base.controller';
-import { JobResponseDto } from './dto/job-response.dto';
+import { Prisma } from '@glory-destiny-online-guide/prisma';
+import { EntityPayloadWithInclude } from 'src/common/types/prisma.types';
 
 @Controller('jobs')
 export class JobController extends BaseController<
-  Job,
-  JobResponseDto,
+  EntityPayloadWithInclude<typeof Prisma.ModelName.Job, Prisma.JobInclude>,
   typeof Prisma.ModelName.Job,
-  JobCreateDto,
-  JobUpdateDto,
-  JobInclude
+  Prisma.JobInclude,
+  Prisma.JobSelect
 > {
-  protected readonly service: JobService; // 只聲明類型，唔賦值
-
-  constructor(private readonly jobService: JobService) {
+  constructor(
+    @Inject(`${Prisma.ModelName.Job}Service`)
+    protected readonly service: any, // 用動態生成嘅 Service
+  ) {
     super();
-    this.service = this.jobService; // 喺 constructor 入面賦值
   }
 }

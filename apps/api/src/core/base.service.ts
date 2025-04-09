@@ -13,10 +13,11 @@ import {
   QueryParams,
   PaginatedQueryParams,
 } from '../common/dto/query-params.dto';
-
-export interface Identifiable {
-  id: number;
-}
+import {
+  EntityCreateInput,
+  EntityUpdateInput,
+  Identifiable,
+} from '../common/types/prisma.types';
 
 export interface PaginatedResult<T> {
   data: T[];
@@ -26,11 +27,9 @@ export interface PaginatedResult<T> {
 @Injectable()
 export abstract class BaseService<
   T extends Identifiable,
-  W extends Identifiable,
   K extends Prisma.ModelName,
-  CreateDto = any,
-  UpdateDto = any,
-  I = any, // 加第 5 個泛型 I 用來表示 include 型別
+  I extends Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include'] = {}, // 用 Prisma Include 類型
+  S extends Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['select'] = {}, // 用 Prisma Select 類型
 > {
   protected readonly logger: Logger;
   protected readonly prisma: PrismaService;
@@ -46,14 +45,16 @@ export abstract class BaseService<
   protected getCacheKey(
     id: string | number | QueryParams | PaginatedQueryParams,
     include?: I,
+    select?: S,
     suffix?: string,
   ): string {
     const namespace = `${process.env.APP_NAME || 'GDO-Guide'}:${process.env.NODE_ENV || 'dev'}`;
     const idStr = typeof id === 'object' ? JSON.stringify(id) : id.toString();
-    const includeStr = include ? `:${JSON.stringify(include)}` : '';
+    const includeStr = include ? `:include:${JSON.stringify(include)}` : '';
+    const selectStr = select ? `:select:${JSON.stringify(select)}` : '';
     return suffix
-      ? `${namespace}:${String(this.entityName)}:${idStr}${includeStr}:${suffix}`
-      : `${namespace}:${String(this.entityName)}:${idStr}${includeStr}`;
+      ? `${namespace}:${String(this.entityName)}:${idStr}${includeStr}${selectStr}:${suffix}`
+      : `${namespace}:${String(this.entityName)}:${idStr}${includeStr}${selectStr}`;
   }
 
   protected async getFromCache<TData>(key: string): Promise<TData | null> {
@@ -63,28 +64,18 @@ export abstract class BaseService<
       if (cached) this.logger.debug(`快取命中，key: ${key}`);
       return cached;
     } catch (error) {
-      this.logger.error(
-        `快取讀取失敗，key: ${key}`,
-        error instanceof Error ? error.stack : undefined,
-      );
+      this.logger.error(`快取讀取失敗，key: ${key}`, error instanceof Error ? error.stack : undefined);
       return null;
     }
   }
 
-  protected async setToCache<TData>(
-    key: string,
-    value: TData,
-    ttl = 3600,
-  ): Promise<void> {
+  protected async setToCache<TData>(key: string, value: TData, ttl = 3600): Promise<void> {
     if (!this.redis) return;
     try {
       await this.redis.setJson(key, value, ttl);
       this.logger.debug(`已快取 ${key}，TTL: ${ttl}秒`);
     } catch (error) {
-      this.logger.error(
-        `快取寫入失敗，key: ${key}`,
-        error instanceof Error ? error.stack : undefined,
-      );
+      this.logger.error(`快取寫入失敗，key: ${key}`, error instanceof Error ? error.stack : undefined);
     }
   }
 
@@ -103,22 +94,20 @@ export abstract class BaseService<
         await this.redis.del(key);
       }
     } catch (error) {
-      this.logger.error(
-        `快取清除失敗`,
-        error instanceof Error ? error.stack : undefined,
-      );
+      this.logger.error(`快取清除失敗`, error instanceof Error ? error.stack : undefined);
     }
   }
 
-  async createOne(data: CreateDto): Promise<T> {
+  async createOne(data: EntityCreateInput<K>): Promise<T> {
     try {
-      return await this.prisma[String(this.entityName)].create({ data });
+      const result = await this.prisma[String(this.entityName)].create({ data });
+      return result as T;
     } catch (error) {
       this.handlePrismaError(error, '創建單個');
     }
   }
 
-  async createMany(data: CreateDto[]): Promise<Prisma.BatchPayload> {
+  async createMany(data: EntityCreateInput<K>[]): Promise<Prisma.BatchPayload> {
     try {
       return await this.prisma[String(this.entityName)].createMany({ data });
     } catch (error) {
@@ -126,29 +115,29 @@ export abstract class BaseService<
     }
   }
 
-  async findOne(id: number, include?: I): Promise<T|W> {
-    const cacheKey = this.getCacheKey(id, include);
-    const cached = await this.getFromCache<T|W>(cacheKey);
+  async findOne(id: number, include?: I, select?: S): Promise<T> {
+    const cacheKey = this.getCacheKey(id, include, select);
+    const cached = await this.getFromCache<T>(cacheKey);
     if (cached) return cached;
 
     try {
       const result = await this.prisma[String(this.entityName)].findUnique({
         where: { id },
         include,
+        select,
       });
-      if (!result)
-        throw new NotFoundException(`${String(this.entityName)} ID ${id} 搵唔到`);
+      if (!result) throw new NotFoundException(`${String(this.entityName)} ID ${id} 搵唔到`);
       await this.setToCache(cacheKey, result);
-      return result;
+      return result as T;
     } catch (error) {
       this.handlePrismaError(error, '查詢單個', id);
     }
   }
 
-  async findMany(params: QueryParams & { include?: I } = {}): Promise<T[]|W[]> {
-    const { where, sort, order, include } = params;
-    const cacheKey = this.getCacheKey({ where, sort, order }, include);
-    const cached = await this.getFromCache<T[]|W[]>(cacheKey);
+  async findMany(params: QueryParams & { include?: I; select?: S } = {}): Promise<T[]> {
+    const { where, sort, order, include, select } = params;
+    const cacheKey = this.getCacheKey({ where, sort, order }, include, select);
+    const cached = await this.getFromCache<T[]>(cacheKey);
     if (cached) return cached;
 
     try {
@@ -156,26 +145,21 @@ export abstract class BaseService<
         where,
         orderBy: sort ? { [sort]: order || 'asc' } : undefined,
         include,
+        select,
       });
       await this.setToCache(cacheKey, result);
-      return result;
+      return result as T[];
     } catch (error) {
       this.handlePrismaError(error, '查詢多個');
     }
   }
 
-  async findManyPaginated(
-    params: PaginatedQueryParams & { include?: I } = {},
-  ): Promise<PaginatedResult<T|W>> {
-    const { page = 1, limit = 10, sort, order, where, include } = params;
-    if (page < 1 || limit < 1)
-      throw new BadRequestException('page 同 limit 必須大於 0');
+  async findManyPaginated(params: PaginatedQueryParams & { include?: I; select?: S } = {}): Promise<PaginatedResult<T>> {
+    const { page = 1, limit = 10, sort, order, where, include, select } = params;
+    if (page < 1 || limit < 1) throw new BadRequestException('page 同 limit 必須大於 0');
     const skip = (page - 1) * limit;
-    const cacheKey = this.getCacheKey(
-      { page, limit, sort, order, where },
-      include,
-    );
-    const cached = await this.getFromCache<PaginatedResult<T|W>>(cacheKey);
+    const cacheKey = this.getCacheKey({ page, limit, sort, order, where }, include, select);
+    const cached = await this.getFromCache<PaginatedResult<T>>(cacheKey);
     if (cached) return cached;
 
     try {
@@ -186,10 +170,11 @@ export abstract class BaseService<
           where,
           orderBy: sort ? { [sort]: order || 'asc' } : undefined,
           include,
+          select,
         }),
         this.prisma[String(this.entityName)].count({ where }),
       ]);
-      const result: PaginatedResult<T|W> = { data, total };
+      const result: PaginatedResult<T> = { data: data as T[], total };
       await this.setToCache(cacheKey, result);
       return result;
     } catch (error) {
@@ -197,23 +182,20 @@ export abstract class BaseService<
     }
   }
 
-  async updateOne(id: number, data: UpdateDto): Promise<T> {
+  async updateOne(id: number, data: EntityUpdateInput<K>): Promise<T> {
     try {
       const result = await this.prisma[String(this.entityName)].update({
         where: { id },
         data,
       });
       await this.invalidateCache(id, true);
-      return result;
+      return result as T;
     } catch (error) {
       this.handlePrismaError(error, '更新單個', id);
     }
   }
 
-  async updateMany(
-    where: Record<string, any>,
-    data: UpdateDto,
-  ): Promise<Prisma.BatchPayload> {
+  async updateMany(where: Record<string, any>, data: EntityUpdateInput<K>): Promise<Prisma.BatchPayload> {
     try {
       const result = await this.prisma[String(this.entityName)].updateMany({
         where,
@@ -226,17 +208,15 @@ export abstract class BaseService<
     }
   }
 
-  async bulkUpdate(updates: { id: number; data: UpdateDto }[]): Promise<T[]> {
+  async bulkUpdate(updates: { id: number; data: EntityUpdateInput<K> }[]): Promise<T[]> {
     try {
       const results = await Promise.all(
         updates.map(({ id, data }) =>
           this.prisma[String(this.entityName)].update({ where: { id }, data }),
         ),
       );
-      await Promise.all(
-        updates.map(({ id }) => this.invalidateCache(id, true)),
-      );
-      return results;
+      await Promise.all(updates.map(({ id }) => this.invalidateCache(id, true)));
+      return results as T[];
     } catch (error) {
       this.handlePrismaError(error, '批量更新多個');
     }
@@ -248,7 +228,7 @@ export abstract class BaseService<
         where: { id },
       });
       await this.invalidateCache(id, true);
-      return result;
+      return result as T;
     } catch (error) {
       this.handlePrismaError(error, '刪除單個', id);
     }
@@ -276,11 +256,7 @@ export abstract class BaseService<
     }
   }
 
-  private handlePrismaError(
-    error: unknown,
-    operation: string,
-    id?: number,
-  ): never {
+  private handlePrismaError(error: unknown, operation: string, id?: number): never {
     const idMsg = id ? `ID ${id}` : '';
     const errorMsg = error instanceof Error ? error.message : String(error);
     this.logger.error(
@@ -302,12 +278,8 @@ export abstract class BaseService<
       }
     }
     if (error instanceof Prisma.PrismaClientValidationError) {
-      throw new BadRequestException(
-        `無效嘅 ${String(this.entityName)} 數據: ${error.message}`,
-      );
+      throw new BadRequestException(`無效嘅 ${String(this.entityName)} 數據: ${error.message}`);
     }
-    throw new InternalServerErrorException(
-      `${operation} ${String(this.entityName)} 失敗: ${errorMsg}`,
-    );
+    throw new InternalServerErrorException(`${operation} ${String(this.entityName)} 失敗: ${errorMsg}`);
   }
 }

@@ -1,25 +1,20 @@
 // apps/api/src/features/geography/race/race.controller.ts
-import { Controller } from '@nestjs/common';
-import { RaceService } from './race.service';
-import { RaceCreateDto } from './dto/race-create.dto';
-import { RaceUpdateDto } from './dto/race-update.dto';
-import { Race, RaceInclude, Prisma } from '@glory-destiny-online-guide/prisma';
+import { Controller, Inject } from '@nestjs/common';
 import { BaseController } from 'src/core/base.controller';
-import { RaceResponseDto } from './dto/race-response.dto';
+import { Prisma } from '@glory-destiny-online-guide/prisma';
+import { EntityPayloadWithInclude } from 'src/common/types/prisma.types';
 
 @Controller('races')
 export class RaceController extends BaseController<
-  Race,
-  RaceResponseDto,
+  EntityPayloadWithInclude<typeof Prisma.ModelName.Race, Prisma.RaceInclude>,
   typeof Prisma.ModelName.Race,
-  RaceCreateDto,
-  RaceUpdateDto,
-  RaceInclude
+  Prisma.RaceInclude,
+  Prisma.RaceSelect
 > {
-  protected readonly service: RaceService; // 只聲明類型，唔賦值
-
-  constructor(private readonly raceService: RaceService) {
+  constructor(
+    @Inject(`${Prisma.ModelName.Race}Service`)
+    protected readonly service: any, // 用動態生成嘅 Service
+  ) {
     super();
-    this.service = this.raceService; // 喺 constructor 入面賦值
   }
 }

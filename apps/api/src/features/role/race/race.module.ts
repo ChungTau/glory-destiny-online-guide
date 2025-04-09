@@ -1,12 +1,13 @@
+// apps/api/src/features/geography/race/race.module.ts
 import { Module } from '@nestjs/common';
-import { RaceService } from './race.service';
 import { RaceController } from './race.controller';
-import { RedisModule } from 'src/core/redis/redis.module';
-import { PrismaModule } from 'src/core/prisma/prisma.module';
+import { RaceService } from './race.service';
+import { BaseModule } from 'src/core/base.module';
+import { Prisma } from '@glory-destiny-online-guide/prisma';
 
 @Module({
-  imports: [RedisModule, PrismaModule],
-  providers: [RaceService],
+  imports: [BaseModule.forEntity(Prisma.ModelName.Race, [RaceService])],
   controllers: [RaceController],
+  providers: [RaceService,],
 })
 export class RaceModule {}

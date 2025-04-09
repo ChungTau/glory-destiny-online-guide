@@ -9,6 +9,7 @@ import { join } from 'path';
 import { RedisModule } from './core/redis/redis.module';
 import { redisConfig } from './core/redis/redis.config';
 import { FeatureModule } from './features/feature.module';
+import { CoreModule } from './core/core.module';
 
 @Module({
   imports: [
@@ -20,13 +21,12 @@ import { FeatureModule } from './features/feature.module';
       useFactory: (configService: ConfigService) => redisConfig(configService),
       inject: [ConfigService],
     }),
-    RedisModule,
+    CoreModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'node_modules', '@bull-board', 'ui', 'dist'),
       serveRoot: '/queues',
     } as const),
     BullBoardModule.forRoot({ route: '/queues', adapter: ExpressAdapter as any }),
-    PrismaModule,
     FeatureModule
   ],
   controllers: [],

@@ -2,9 +2,10 @@
 import { Module } from '@nestjs/common';
 import { NationModule } from './nation/nation.module';
 import { AreaModule } from './area/area.module';
+import { CoreModule } from 'src/core/core.module';
 
 @Module({
-  imports: [NationModule, AreaModule],
+  imports: [CoreModule, NationModule, AreaModule],
   exports: [NationModule, AreaModule],
 })
 export class GeographyModule {}
