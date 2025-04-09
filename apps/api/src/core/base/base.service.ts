@@ -199,7 +199,6 @@ export abstract class BaseService<
 
   async findManyPaginated(params: PaginatedQueryParams & { include?: I; select?: S } = {}): Promise<PaginatedResult<T>> {
     const { page = 1, limit = 10, sort, order, where, include, select } = params;
-    this.logger.debug(`findManyPaginated 接收到嘅 where: ${JSON.stringify(where)}`);
     if (page < 1 || limit < 1) throw new BadRequestException('page 同 limit 必須大於 0');
     const skip = (page - 1) * limit;
     const cacheKey = this.getCacheKey({ page, limit, sort, order, where }, include, select);
