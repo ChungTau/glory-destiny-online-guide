@@ -8,6 +8,9 @@ import { Prisma } from '@glory-destiny-online-guide/prisma';
 @Module({
   imports: [BaseModule],
   controllers: [SkillLevelController],
-  providers: [CustomSkillLevelService, provideBaseService(Prisma.ModelName.SkillLevel)],
+  providers: [
+    CustomSkillLevelService,
+    provideBaseService(Prisma.ModelName.SkillLevel),
+  ],
 })
 export class SkillLevelModule {}

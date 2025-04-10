@@ -6,7 +6,10 @@ import { EntityPayloadWithInclude } from 'src/common/types/prisma.types';
 
 @Controller('skill-levels')
 export class SkillLevelController extends BaseController<
-  EntityPayloadWithInclude<typeof Prisma.ModelName.SkillLevel, Prisma.SkillLevelInclude>,
+  EntityPayloadWithInclude<
+    typeof Prisma.ModelName.SkillLevel,
+    Prisma.SkillLevelInclude
+  >,
   typeof Prisma.ModelName.SkillLevel,
   Prisma.SkillLevelInclude,
   Prisma.SkillLevelSelect

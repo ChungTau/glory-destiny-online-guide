@@ -5,5 +5,8 @@ import { RedisService } from 'src/core/redis/redis.service';
 
 @Injectable()
 export class CustomSkillLevelService {
-  constructor(private prisma: PrismaService, private redis: RedisService) {}
+  constructor(
+    private prisma: PrismaService,
+    private redis: RedisService,
+  ) {}
 }

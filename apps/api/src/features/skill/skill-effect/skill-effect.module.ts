@@ -8,6 +8,9 @@ import { Prisma } from '@glory-destiny-online-guide/prisma';
 @Module({
   imports: [BaseModule],
   controllers: [SkillEffectController],
-  providers: [CustomSkillEffectService, provideBaseService(Prisma.ModelName.SkillEffect)],
+  providers: [
+    CustomSkillEffectService,
+    provideBaseService(Prisma.ModelName.SkillEffect),
+  ],
 })
 export class SkillEffectModule {}

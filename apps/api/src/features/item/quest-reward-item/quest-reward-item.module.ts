@@ -1,19 +1,19 @@
-// apps/api/src/features/skill/pet-skill-link/pet-skill-link.module.ts
+// apps/api/src/features/item/quest-reward-item/quest-reward-item.module.ts
 import { Module } from '@nestjs/common';
 import { provideJunctionService } from '../../../core/junction/junction.utils';
-import { PetSkillLinkController } from './pet-skill-link.controller';
+import { QuestRewardItemController } from './quest-reward-item.controller';
 import { JunctionModule } from 'src/core/junction/junction.module';
 import { Prisma } from '@glory-destiny-online-guide/prisma';
 
 @Module({
   imports: [JunctionModule],
-  controllers: [PetSkillLinkController],
+  controllers: [QuestRewardItemController],
   providers: [
     provideJunctionService(
-      Prisma.ModelName.PetSkillLink,
-      'petId',
-      'petSkillId',
+      Prisma.ModelName.QuestRewardItem,
+      'questId',
+      'itemId',
     ),
   ],
 })
-export class PetSkillLinkModule {}
+export class QuestRewardItemModule {}

@@ -6,7 +6,10 @@ import { EntityPayloadWithInclude } from 'src/common/types/prisma.types';
 
 @Controller('skill-effects')
 export class SkillEffectController extends BaseController<
-  EntityPayloadWithInclude<typeof Prisma.ModelName.SkillEffect, Prisma.SkillEffectInclude>,
+  EntityPayloadWithInclude<
+    typeof Prisma.ModelName.SkillEffect,
+    Prisma.SkillEffectInclude
+  >,
   typeof Prisma.ModelName.SkillEffect,
   Prisma.SkillEffectInclude,
   Prisma.SkillEffectSelect
