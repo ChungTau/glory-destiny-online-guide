@@ -70,6 +70,7 @@ services:
     volumes:
       - .:/app
       - prisma_generated:/app/packages/prisma/generated # 用同一個共享卷宗
+      - /app/apps/api/node_modules # 避免覆蓋 node_modules
     ports:
       - "4000:4000"
     depends_on:
@@ -87,6 +88,32 @@ services:
         - action: sync
           path: ./apps/api/src
           target: /app/apps/api/src
+
+  cms:
+    build:
+      context: .
+      dockerfile: apps/cms/Dockerfile.dev
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://api:4000
+    volumes:
+      - ./apps/cms:/app/apps/cms
+      - /app/apps/cms/node_modules # 避免覆蓋 node_modules
+      - /app/apps/cms/.next
+    depends_on:
+      - api
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/cms
+          target: /app/apps/cms
+          ignore:
+            - node_modules
+            - .next
+        - action: rebuild
+          path: ./apps/cms/package.json
 
 volumes:
   postgres_data:

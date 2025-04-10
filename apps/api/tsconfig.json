@@ -18,7 +18,10 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "paths": {
+      "@glory-destiny-online-guide/prisma/*": ["../../packages/prisma/*"]
+    },
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
