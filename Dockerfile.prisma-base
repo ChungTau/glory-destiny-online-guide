@@ -1,0 +1,14 @@
+# 基於 base，加 prisma 共用依賴
+FROM gdo-guide-base:latest AS prisma-base
+
+# 保持喺根目錄
+WORKDIR /app
+
+# 複製 prisma 嘅 package.json（本地 node_modules 已排除）
+COPY packages/prisma/package.json ./packages/prisma/
+
+# 喺容器內安裝 prisma 依賴
+RUN pnpm install --frozen-lockfile
+
+# 複製 prisma 源碼（dist 已排除）
+COPY packages/prisma/ ./packages/prisma/

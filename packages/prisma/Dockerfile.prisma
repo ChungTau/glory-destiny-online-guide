@@ -1,7 +1,5 @@
-FROM node:20-alpine
-RUN apk add --no-cache postgresql-client
+# 基於 prisma-base，重用 prisma 依賴
+FROM gdo-guide-prisma-base:latest AS prisma-dev
+
+# 切換到 prisma 工作目錄
 WORKDIR /app/packages/prisma
-COPY package.json pnpm-lock.yaml /app/
-COPY packages/prisma/package.json .
-RUN npm install -g pnpm && pnpm install
-COPY packages/prisma/ .

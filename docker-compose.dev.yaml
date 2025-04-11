@@ -1,10 +1,30 @@
 services:
+  # 基礎服務，只建構工具環境
   base:
     build:
       context: .
       dockerfile: Dockerfile.base
     image: gdo-guide-base:latest
 
+  # Prisma 共用基礎服務
+  prisma-base:
+    build:
+      context: .
+      dockerfile: Dockerfile.prisma-base
+    image: gdo-guide-prisma-base:latest
+    depends_on:
+      - base
+
+  # UI 共用基礎服務
+  ui-base:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui-base
+    image: gdo-guide-ui-base:latest
+    depends_on:
+      - base
+
+  # Postgres 數據庫
   postgres:
     image: postgres:15-alpine
     environment:
@@ -12,15 +32,16 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydb
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data # 持久化數據
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d mydb"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "pg_isready -U user -d mydb"] # 檢查 Postgres 健康
+      interval: 5s # 每 5 秒檢查一次
+      timeout: 5s # 超時 5 秒
+      retries: 5 # 重試 5 次
 
+  # Redis 服務
   redis:
     image: redis:7-alpine
     volumes:
@@ -28,40 +49,41 @@ services:
     ports:
       - "6379:6379"
 
+  # Prisma 服務，負責遷移同生成
   prisma:
     build:
       context: .
       dockerfile: packages/prisma/Dockerfile.prisma
     volumes:
-      - .:/app
-      - prisma_generated:/app/packages/prisma/generated
-      - /app/packages/prisma/node_modules  # 避免覆蓋本地 node_modules
+      - ./packages/prisma:/app/packages/prisma # 只映射 prisma 源碼
+      - prisma_generated:/app/packages/prisma/generated # 共享生成嘅 client
+      - /app/node_modules # 避免本地 node_modules 干擾
     depends_on:
-      base:
-        condition: service_completed_successfully
       postgres:
-        condition: service_healthy
+        condition: service_healthy # 等 Postgres 健康後啟動
     environment:
       - DATABASE_URL=postgresql://user:password@postgres:5432/mydb?schema=public
     command: >
-      sh -c "while ! pg_isready -h postgres -U user -d mydb; do sleep 1; done &&
-         pnpm run migrate:dev --name init && pnpm run build && pnpm run watch"
+      sh -c "pnpm run migrate:dev --name init && pnpm run build && pnpm run generate && pnpm run watch"
+      # 移除 pg_isready 檢查，直接執行 Prisma 命令
 
+  # API 服務（NestJS）
   api:
     build:
       context: .
       dockerfile: apps/api/Dockerfile.dev
     volumes:
-      - .:/app
-      - prisma_generated:/app/packages/prisma/generated
-      - /app/apps/api/node_modules  # 避免覆蓋本地 node_modules
+      - ./apps/api:/app/apps/api # 只映射 api 源碼
+      - prisma_generated:/app/packages/prisma/generated # 用 prisma 生成嘅 client
+      - /app/node_modules # 避免本地 node_modules 干擾
+      - /app/apps/api/dist # 避免本地 dist 干擾
     ports:
       - "4000:4000"
     depends_on:
-      base:
+      prisma-base:
         condition: service_completed_successfully
       prisma:
-        condition: service_started
+        condition: service_started # 等 prisma 生成 client
       postgres:
         condition: service_healthy
       redis:
@@ -74,39 +96,49 @@ services:
       - REDIS_PORT=6379
     develop:
       watch:
-        - action: sync
+        - action: sync # 同步 api 源碼改動
           path: ./apps/api/src
           target: /app/apps/api/src
-        - action: sync
+        - action: sync # 同步 prisma 生成嘅 client
           path: ./packages/prisma/generated
           target: /app/packages/prisma/generated
 
+  # CMS 服務（Next.js）
   cms:
     build:
       context: .
       dockerfile: apps/cms/Dockerfile.dev
     volumes:
-      - ./apps/cms:/app/apps/cms
-      - /app/apps/cms/node_modules
-      - /app/apps/cms/.next
+      - ./apps/cms:/app/apps/cms # 只映射 cms 源碼
+      - ./packages/ui:/app/packages/ui # 只映射 ui 源碼
+      - prisma_generated:/app/packages/prisma/generated # 用 prisma 生成嘅 client
+      - /app/node_modules # 避免本地 node_modules 干擾
+      - /app/apps/cms/.next # 避免本地 .next 干擾
+      - /app/apps/cms/dist # 避免本地 dist 干擾
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=development
-      - NEXT_PUBLIC_API_URL=http://api:4000
     depends_on:
-      base:
+      prisma-base:
+        condition: service_completed_successfully
+      ui-base:
         condition: service_completed_successfully
       api:
         condition: service_started
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://api:4000
     develop:
       watch:
-        - action: sync
+        - action: sync # 同步 cms 源碼改動
           path: ./apps/cms/src
           target: /app/apps/cms/src
-        - action: rebuild
+        - action: sync # 同步 ui 源碼改動
+          path: ./packages/ui/src
+          target: /app/packages/ui/src
+        - action: rebuild # 如果 package.json 改咗，重建
           path: ./apps/cms/package.json
 
+# 共享 volume
 volumes:
   postgres_data:
   redis_data:

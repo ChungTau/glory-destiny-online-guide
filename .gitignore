@@ -32,3 +32,5 @@ Thumbs.db
 
 # 測試覆蓋率報告（如果有）
 coverage/
+
+repomix-output.xml

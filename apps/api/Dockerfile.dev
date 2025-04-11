@@ -1,6 +1,26 @@
-FROM gdo-guide-base:latest AS api-dev
+# 基於 prisma-base，只用 prisma
+FROM gdo-guide-prisma-base:latest AS api-dev
+
+# 保持喺根目錄，先裝依賴
+WORKDIR /app
+
+# 複製 api 嘅 package.json（本地 node_modules 已排除）
+COPY apps/api/package.json ./apps/api/
+
+# 喺容器內安裝 api 依賴
+RUN pnpm install --frozen-lockfile
+
+# 複製 api 源碼（dist 已排除）
+COPY apps/api/ ./apps/api/
+
+# 切換到 api 工作目錄
 WORKDIR /app/apps/api
-COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm && pnpm install && npm install -g @nestjs/cli
+
+# 安裝 NestJS CLI
+RUN npm install -g @nestjs/cli
+
+# 暴露端口
 EXPOSE 4000
+
+# 啟動開發模式
 CMD ["pnpm", "run", "dev"]

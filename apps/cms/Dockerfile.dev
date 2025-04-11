@@ -1,4 +1,25 @@
-FROM gdo-guide-base:latest AS cms-dev
+# 基於 prisma-base，加 ui 同 cms
+FROM gdo-guide-prisma-base:latest AS cms-dev
+
+# 保持喺根目錄，先裝依賴
+WORKDIR /app
+
+# 複製 ui 同 cms 嘅 package.json（本地 node_modules 已排除）
+COPY packages/ui/package.json ./packages/ui/
+COPY apps/cms/package.json ./apps/cms/
+
+# 喺容器內安裝 ui 同 cms 依賴
+RUN pnpm install --frozen-lockfile
+
+# 複製 ui 同 cms 源碼（dist 同 .next 已排除）
+COPY packages/ui/ ./packages/ui/
+COPY apps/cms/ ./apps/cms/
+
+# 切換到 cms 工作目錄
 WORKDIR /app/apps/cms
+
+# 暴露端口
 EXPOSE 3000
+
+# 啟動開發模式
 CMD ["pnpm", "run", "dev"]

@@ -1,0 +1,14 @@
+# 基於 base，加 ui 共用依賴
+FROM gdo-guide-base:latest AS ui-base
+
+# 保持喺根目錄
+WORKDIR /app
+
+# 複製 ui 嘅 package.json（本地 node_modules 已排除）
+COPY packages/ui/package.json ./packages/ui/
+
+# 喺容器內安裝 ui 依賴
+RUN pnpm install --frozen-lockfile
+
+# 複製 ui 源碼（dist 已排除）
+COPY packages/ui/ ./packages/ui/
