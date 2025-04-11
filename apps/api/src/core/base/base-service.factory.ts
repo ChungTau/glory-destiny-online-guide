@@ -18,7 +18,10 @@ export class BaseServiceFactory {
   getService<K extends Prisma.ModelName>(
     entityName: K,
   ): BaseService<
-    EntityPayloadWithInclude<K, Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include']>,
+    EntityPayloadWithInclude<
+      K,
+      Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include']
+    >,
     K,
     Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include'],
     Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['select']
@@ -26,7 +29,10 @@ export class BaseServiceFactory {
     const serviceName = `${entityName}Service`;
     if (!this.services.has(serviceName)) {
       class DynamicService extends BaseService<
-        EntityPayloadWithInclude<K, Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include']>,
+        EntityPayloadWithInclude<
+          K,
+          Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include']
+        >,
         K,
         Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include'],
         Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['select']
@@ -42,7 +48,10 @@ export class BaseServiceFactory {
       this.services.set(serviceName, service);
     }
     return this.services.get(serviceName) as BaseService<
-      EntityPayloadWithInclude<K, Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include']>,
+      EntityPayloadWithInclude<
+        K,
+        Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include']
+      >,
       K,
       Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include'],
       Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['select']

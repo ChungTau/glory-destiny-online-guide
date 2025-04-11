@@ -1,4 +1,10 @@
 services:
+  base:
+    build:
+      context: .
+      dockerfile: Dockerfile.base
+    image: gdo-guide-base:latest
+
   postgres:
     image: postgres:15-alpine
     environment:
@@ -22,46 +28,24 @@ services:
     ports:
       - "6379:6379"
 
-  prisma-migrate:
-    build:
-      context: .
-      dockerfile: packages/prisma/Dockerfile.prisma
-    volumes:
-      - .:/app
-      - /app/node_modules
-      - prisma_generated:/app/packages/prisma/generated
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      - DATABASE_URL=postgresql://user:password@postgres:5432/mydb?schema=public
-    command: pnpm --filter=@glory-destiny-online-guide/prisma run migrate:dev --name init
-    # 一次性任務，完成後退出
-
   prisma:
     build:
       context: .
       dockerfile: packages/prisma/Dockerfile.prisma
     volumes:
       - .:/app
-      - /app/node_modules
       - prisma_generated:/app/packages/prisma/generated
+      - /app/packages/prisma/node_modules  # 避免覆蓋本地 node_modules
     depends_on:
-      prisma-migrate:
+      base:
         condition: service_completed_successfully
       postgres:
         condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://user:password@postgres:5432/mydb?schema=public
-    command: pnpm --filter=@glory-destiny-online-guide/prisma run start
-    develop:
-      watch:
-        - action: sync
-          path: ./packages/prisma/schema
-          target: /app/packages/prisma/schema
-        - action: sync
-          path: ./packages/prisma/scripts/merge-prisma.ts
-          target: /app/packages/prisma/scripts/merge-prisma.ts
+    command: >
+      sh -c "while ! pg_isready -h postgres -U user -d mydb; do sleep 1; done &&
+         pnpm run migrate:dev --name init && pnpm run build && pnpm run watch"
 
   api:
     build:
@@ -69,14 +53,19 @@ services:
       dockerfile: apps/api/Dockerfile.dev
     volumes:
       - .:/app
-      - prisma_generated:/app/packages/prisma/generated # 用同一個共享卷宗
-      - /app/apps/api/node_modules # 避免覆蓋 node_modules
+      - prisma_generated:/app/packages/prisma/generated
+      - /app/apps/api/node_modules  # 避免覆蓋本地 node_modules
     ports:
       - "4000:4000"
     depends_on:
-      - postgres
-      - redis
-      - prisma
+      base:
+        condition: service_completed_successfully
+      prisma:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://user:password@postgres:5432/mydb?schema=public
@@ -88,34 +77,37 @@ services:
         - action: sync
           path: ./apps/api/src
           target: /app/apps/api/src
+        - action: sync
+          path: ./packages/prisma/generated
+          target: /app/packages/prisma/generated
 
   cms:
     build:
       context: .
       dockerfile: apps/cms/Dockerfile.dev
+    volumes:
+      - ./apps/cms:/app/apps/cms
+      - /app/apps/cms/node_modules
+      - /app/apps/cms/.next
     ports:
-      - "3001:3000"
+      - "3000:3000"
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://api:4000
-    volumes:
-      - ./apps/cms:/app/apps/cms
-      - /app/apps/cms/node_modules # 避免覆蓋 node_modules
-      - /app/apps/cms/.next
     depends_on:
-      - api
+      base:
+        condition: service_completed_successfully
+      api:
+        condition: service_started
     develop:
       watch:
         - action: sync
-          path: ./apps/cms
-          target: /app/apps/cms
-          ignore:
-            - node_modules
-            - .next
+          path: ./apps/cms/src
+          target: /app/apps/cms/src
         - action: rebuild
           path: ./apps/cms/package.json
 
 volumes:
   postgres_data:
   redis_data:
-  prisma_generated: # 新增共享卷宗
+  prisma_generated:

@@ -9,7 +9,11 @@ const outputDir = path.join(__dirname, '../generated/translations');
 function deepMerge(target: any, source: any): any {
   const output = { ...target };
   for (const key in source) {
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+    if (
+      source[key] &&
+      typeof source[key] === 'object' &&
+      !Array.isArray(source[key])
+    ) {
       output[key] = deepMerge(output[key] || {}, source[key]);
     } else {
       output[key] = source[key];
@@ -22,8 +26,8 @@ async function readJsonFiles(dir: string): Promise<Record<string, any>> {
   const translations: Record<string, any> = {};
   try {
     const files = (await fs.readdir(dir, { withFileTypes: true }))
-      .filter(file => file.isFile() && file.name.endsWith('.json'))
-      .map(file => file.name);
+      .filter((file) => file.isFile() && file.name.endsWith('.json'))
+      .map((file) => file.name);
 
     for (const file of files) {
       const lang = path.basename(file, '.json');
@@ -49,7 +53,10 @@ async function mergeTranslations() {
     ]);
 
     for (const lang of allLanguages) {
-      const merged = deepMerge(clientTranslations[lang] || {}, cmsTranslations[lang] || {});
+      const merged = deepMerge(
+        clientTranslations[lang] || {},
+        cmsTranslations[lang] || {}
+      );
       const outputFile = path.join(outputDir, `${lang}.json`);
       await fs.writeFile(outputFile, JSON.stringify(merged, null, 2), 'utf-8');
       console.log(`Merged translations for ${lang} written to ${outputFile}`);

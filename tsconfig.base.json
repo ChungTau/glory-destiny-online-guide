@@ -1,9 +1,21 @@
 {
-    "compilerOptions": {
-      "baseUrl": ".",
-      "module": "commonjs",
-      "target": "es6",
-      "strict": true,
-      "esModuleInterop": true
-    }
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "lib": ["ES2020", "DOM"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "baseUrl": ".",
+    "paths": {
+      "@glory-destiny-online-guide/prisma": ["packages/prisma/*"]
+    },
+    "rootDir": "."
+  },
+  "exclude": ["node_modules", "**/node_modules", "dist", "**/dist"]
 }

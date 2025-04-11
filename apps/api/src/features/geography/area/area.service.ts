@@ -5,7 +5,10 @@ import { RedisService } from 'src/core/redis/redis.service';
 
 @Injectable()
 export class CustomAreaService {
-  constructor(private prisma: PrismaService, private redis: RedisService) {}
+  constructor(
+    private prisma: PrismaService,
+    private redis: RedisService,
+  ) {}
 
   // Custom methods
   async findAreasByNation(nationId: number) {

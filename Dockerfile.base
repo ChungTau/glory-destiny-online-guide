@@ -1,0 +1,16 @@
+# 文件路徑: ./Dockerfile.base
+FROM node:20-alpine AS base
+
+WORKDIR /app
+
+# 安裝 pnpm 同依賴
+RUN npm install -g pnpm@10.6.4
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/api/package.json ./apps/api/
+COPY apps/cms/package.json ./apps/cms/
+COPY packages/prisma/package.json ./packages/prisma/
+COPY packages/ui/package.json ./packages/ui/
+RUN pnpm install --frozen-lockfile
+
+# 複製整個項目（後續會喺子 Dockerfile 指定具體路徑）
+COPY . .

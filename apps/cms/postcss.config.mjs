@@ -1,1 +1,1 @@
-export { default } from "@glory-destiny-online-guide/ui/postcss.config";
+export { default } from '@glory-destiny-online-guide/ui/postcss.config';

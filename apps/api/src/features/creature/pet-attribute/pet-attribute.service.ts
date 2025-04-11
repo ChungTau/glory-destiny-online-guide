@@ -5,5 +5,8 @@ import { RedisService } from 'src/core/redis/redis.service';
 
 @Injectable()
 export class CustomPetAttributeService {
-  constructor(private prisma: PrismaService, private redis: RedisService) {}
+  constructor(
+    private prisma: PrismaService,
+    private redis: RedisService,
+  ) {}
 }

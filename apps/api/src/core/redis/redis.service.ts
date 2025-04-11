@@ -27,7 +27,10 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       const pong = await this.redis.ping();
       this.logger.log('Redis 連線成功: ' + pong);
     } catch (error) {
-      this.logger.error('Redis 連線失敗', error instanceof Error ? error.stack : undefined);
+      this.logger.error(
+        'Redis 連線失敗',
+        error instanceof Error ? error.stack : undefined,
+      );
       throw new Error('Redis 連線失敗');
     }
   }

@@ -1,5 +1,5 @@
-import { Prisma } from "@glory-destiny-online-guide/prisma";
-import { EntityWhereInput } from "../types/prisma.types";
+import { Prisma } from '@glory-destiny-online-guide/prisma';
+import { EntityWhereInput } from '../types/prisma.types';
 
 // apps/api/src/common/dto/query-params.dto.ts
 export interface QueryParams<K extends Prisma.ModelName = any> {

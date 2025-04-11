@@ -27,8 +27,10 @@ import {
 export abstract class BaseController<
   T extends Identifiable,
   K extends Prisma.ModelName,
-  I extends Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include'] = {},
-  S extends Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['select'] = {},
+  I extends
+    Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include'] = {},
+  S extends
+    Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['select'] = {},
 > {
   protected abstract readonly service: BaseService<T, K, I, S>;
 
@@ -38,7 +40,9 @@ export abstract class BaseController<
   }
 
   @Post('bulk')
-  async bulkCreate(@Body() createDtos: EntityCreateInput<K>[]): Promise<Prisma.BatchPayload> {
+  async bulkCreate(
+    @Body() createDtos: EntityCreateInput<K>[],
+  ): Promise<Prisma.BatchPayload> {
     if (!Array.isArray(createDtos) || createDtos.length === 0) {
       throw new BadRequestException('createDtos 必須係非空數組');
     }
@@ -53,7 +57,8 @@ export abstract class BaseController<
   ): Promise<T[]> {
     const include = this.parseInclude(includeStr);
     const select = this.parseSelect(selectStr);
-    if (include && select) throw new BadRequestException('唔可以同時用 include 同 select');
+    if (include && select)
+      throw new BadRequestException('唔可以同時用 include 同 select');
     return this.service.createMany(createManyDto, include, select);
   }
 
@@ -69,8 +74,16 @@ export abstract class BaseController<
     const include = this.parseInclude(includeStr);
     const select = this.parseSelect(selectStr);
     const where = this.parseWhere(whereStr);
-    if (include && select) throw new BadRequestException('唔可以同時用 include 同 select');
-    return this.service.findManyPaginated({ ...query, page, limit, where, include, select });
+    if (include && select)
+      throw new BadRequestException('唔可以同時用 include 同 select');
+    return this.service.findManyPaginated({
+      ...query,
+      page,
+      limit,
+      where,
+      include,
+      select,
+    });
   }
 
   @Get(':id')
@@ -81,7 +94,8 @@ export abstract class BaseController<
   ): Promise<T> {
     const include = this.parseInclude(includeStr);
     const select = this.parseSelect(selectStr);
-    if (include && select) throw new BadRequestException('唔可以同時用 include 同 select');
+    if (include && select)
+      throw new BadRequestException('唔可以同時用 include 同 select');
     return this.service.findOne(id, include, select);
   }
 
@@ -113,7 +127,9 @@ export abstract class BaseController<
   }
 
   @Delete()
-  async removeMany(@Query('where') whereStr: string): Promise<Prisma.BatchPayload> {
+  async removeMany(
+    @Query('where') whereStr: string,
+  ): Promise<Prisma.BatchPayload> {
     const where = this.parseWhere(whereStr);
     return this.service.removeMany(where);
   }

@@ -31,8 +31,10 @@ export interface PaginatedResult<T> {
 export abstract class BaseService<
   T extends Identifiable,
   K extends Prisma.ModelName,
-  I extends Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include'] = {}, // 用 Prisma Include 類型
-  S extends Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['select'] = {}, // 用 Prisma Select 類型
+  I extends
+    Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['include'] = {}, // 用 Prisma Include 類型
+  S extends
+    Prisma.TypeMap['model'][K]['operations']['findUnique']['args']['select'] = {}, // 用 Prisma Select 類型
 > {
   protected readonly logger: Logger;
   protected readonly prisma: PrismaService;
@@ -46,12 +48,23 @@ export abstract class BaseService<
   }
 
   protected getCacheKey(
-    id: string | number | QueryParams | PaginatedQueryParams | EntityWhereInput<K> | undefined, // 明確加 undefined
+    id:
+      | string
+      | number
+      | QueryParams
+      | PaginatedQueryParams
+      | EntityWhereInput<K>
+      | undefined, // 明確加 undefined
     include?: I,
     select?: S,
     suffix?: string,
   ): string {
-    const idStr = id === undefined ? '' : typeof id === 'object' ? JSON.stringify(id) : id.toString();
+    const idStr =
+      id === undefined
+        ? ''
+        : typeof id === 'object'
+          ? JSON.stringify(id)
+          : id.toString();
     const includeStr = include ? `:include:${JSON.stringify(include)}` : '';
     const selectStr = select ? `:select:${JSON.stringify(select)}` : '';
     return suffix
@@ -66,23 +79,39 @@ export abstract class BaseService<
       if (cached) this.logger.debug(`快取命中，key: ${key}`);
       return cached;
     } catch (error) {
-      this.logger.error(`快取讀取失敗，key: ${key}`, error instanceof Error ? error.stack : undefined);
+      this.logger.error(
+        `快取讀取失敗，key: ${key}`,
+        error instanceof Error ? error.stack : undefined,
+      );
       return null;
     }
   }
 
-  protected async setToCache<TData>(key: string, value: TData, ttl = 3600): Promise<void> {
+  protected async setToCache<TData>(
+    key: string,
+    value: TData,
+    ttl = 3600,
+  ): Promise<void> {
     if (!this.redis) return;
     try {
       await this.redis.setJson(key, value, ttl);
       this.logger.debug(`已快取 ${key}，TTL: ${ttl}秒`);
     } catch (error) {
-      this.logger.error(`快取寫入失敗，key: ${key}`, error instanceof Error ? error.stack : undefined);
+      this.logger.error(
+        `快取寫入失敗，key: ${key}`,
+        error instanceof Error ? error.stack : undefined,
+      );
     }
   }
 
   protected async invalidateCache(
-    idOrQuery: number | string | QueryParams | PaginatedQueryParams | EntityWhereInput<K> | undefined,
+    idOrQuery:
+      | number
+      | string
+      | QueryParams
+      | PaginatedQueryParams
+      | EntityWhereInput<K>
+      | undefined,
     wildcard = false,
   ): Promise<void> {
     if (!this.redis) {
@@ -96,9 +125,11 @@ export abstract class BaseService<
         const pattern = `${String(this.entityName)}:*`;
         this.logger.debug(`準備用 wildcard 清除快取，pattern: ${pattern}`);
         const keys = await this.redis.keys(pattern);
-        
+
         if (keys.length > 0) {
-          this.logger.debug(`搵到 ${keys.length} 個匹配嘅快取 key: ${keys.join(', ')}`);
+          this.logger.debug(
+            `搵到 ${keys.length} 個匹配嘅快取 key: ${keys.join(', ')}`,
+          );
           await this.redis.del(keys);
           this.logger.debug(`成功清除 ${keys.length} 個快取 key`);
         } else {
@@ -121,7 +152,9 @@ export abstract class BaseService<
 
   async createOne(data: EntityCreateInput<K>): Promise<T> {
     try {
-      const result = await this.prisma[String(this.entityName)].create({ data });
+      const result = await this.prisma[String(this.entityName)].create({
+        data,
+      });
       // 用 wildcard 清除所有相關快取
       await this.invalidateCache('', true); // 改用空字符串，確保 pattern 係 GDO-Guide:development:Nation:*
       return result as T;
@@ -132,7 +165,9 @@ export abstract class BaseService<
 
   async bulkCreate(data: EntityCreateInput<K>[]): Promise<Prisma.BatchPayload> {
     try {
-      const result = await this.prisma[String(this.entityName)].createMany({ data });
+      const result = await this.prisma[String(this.entityName)].createMany({
+        data,
+      });
       await this.invalidateCache('', true); // 改用空字符串
       return result;
     } catch (error) {
@@ -169,7 +204,10 @@ export abstract class BaseService<
         include,
         select,
       });
-      if (!result) throw new NotFoundException(`${String(this.entityName)} ID ${id} 搵唔到`);
+      if (!result)
+        throw new NotFoundException(
+          `${String(this.entityName)} ID ${id} 搵唔到`,
+        );
       await this.setToCache(cacheKey, result);
       return result as T;
     } catch (error) {
@@ -177,7 +215,9 @@ export abstract class BaseService<
     }
   }
 
-  async findMany(params: QueryParams & { include?: I; select?: S } = {}): Promise<T[]> {
+  async findMany(
+    params: QueryParams & { include?: I; select?: S } = {},
+  ): Promise<T[]> {
     const { where, sort, order, include, select } = params;
     const cacheKey = this.getCacheKey({ where, sort, order }, include, select);
     const cached = await this.getFromCache<T[]>(cacheKey);
@@ -197,11 +237,26 @@ export abstract class BaseService<
     }
   }
 
-  async findManyPaginated(params: PaginatedQueryParams & { include?: I; select?: S } = {}): Promise<PaginatedResult<T>> {
-    const { page = 1, limit = 10, sort, order, where, include, select } = params;
-    if (page < 1 || limit < 1) throw new BadRequestException('page 同 limit 必須大於 0');
+  async findManyPaginated(
+    params: PaginatedQueryParams & { include?: I; select?: S } = {},
+  ): Promise<PaginatedResult<T>> {
+    const {
+      page = 1,
+      limit = 10,
+      sort,
+      order,
+      where,
+      include,
+      select,
+    } = params;
+    if (page < 1 || limit < 1)
+      throw new BadRequestException('page 同 limit 必須大於 0');
     const skip = (page - 1) * limit;
-    const cacheKey = this.getCacheKey({ page, limit, sort, order, where }, include, select);
+    const cacheKey = this.getCacheKey(
+      { page, limit, sort, order, where },
+      include,
+      select,
+    );
     const cached = await this.getFromCache<PaginatedResult<T>>(cacheKey);
     if (cached) return cached;
 
@@ -238,7 +293,10 @@ export abstract class BaseService<
     }
   }
 
-  async updateMany(where: EntityWhereInput<K>, data: EntityUpdateManyInput<K>): Promise<Prisma.BatchPayload> {
+  async updateMany(
+    where: EntityWhereInput<K>,
+    data: EntityUpdateManyInput<K>,
+  ): Promise<Prisma.BatchPayload> {
     try {
       const result = await this.prisma[String(this.entityName)].updateMany({
         where,
@@ -251,14 +309,18 @@ export abstract class BaseService<
     }
   }
 
-  async bulkUpdate(updates: { id: number; data: EntityUpdateInput<K> }[]): Promise<T[]> {
+  async bulkUpdate(
+    updates: { id: number; data: EntityUpdateInput<K> }[],
+  ): Promise<T[]> {
     try {
       const results = await Promise.all(
         updates.map(({ id, data }) =>
           this.prisma[String(this.entityName)].update({ where: { id }, data }),
         ),
       );
-      await Promise.all(updates.map(({ id }) => this.invalidateCache(id, true)));
+      await Promise.all(
+        updates.map(({ id }) => this.invalidateCache(id, true)),
+      );
       return results as T[];
     } catch (error) {
       this.handlePrismaError(error, '批量更新多個');
@@ -279,7 +341,9 @@ export abstract class BaseService<
 
   async removeMany(where: EntityWhereInput<K>): Promise<Prisma.BatchPayload> {
     try {
-      const result = await this.prisma[String(this.entityName)].deleteMany({ where });
+      const result = await this.prisma[String(this.entityName)].deleteMany({
+        where,
+      });
       await this.invalidateCache(where);
       return result;
     } catch (error) {
@@ -299,7 +363,11 @@ export abstract class BaseService<
     }
   }
 
-  private handlePrismaError(error: unknown, operation: string, id?: number): never {
+  private handlePrismaError(
+    error: unknown,
+    operation: string,
+    id?: number,
+  ): never {
     const idMsg = id ? `ID ${id}` : '';
     const errorMsg = error instanceof Error ? error.message : String(error);
     this.logger.error(
@@ -309,11 +377,17 @@ export abstract class BaseService<
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       switch (error.code) {
         case 'P2002':
-          throw new BadRequestException(`${String(this.entityName)} 唯一字段衝突`);
+          throw new BadRequestException(
+            `${String(this.entityName)} 唯一字段衝突`,
+          );
         case 'P2025':
-          throw new NotFoundException(`${String(this.entityName)} ${idMsg} 搵唔到`);
+          throw new NotFoundException(
+            `${String(this.entityName)} ${idMsg} 搵唔到`,
+          );
         case 'P2003':
-          throw new BadRequestException(`${String(this.entityName)} 外鍵約束失敗`);
+          throw new BadRequestException(
+            `${String(this.entityName)} 外鍵約束失敗`,
+          );
         default:
           throw new InternalServerErrorException(
             `${operation} ${String(this.entityName)} 失敗: ${error.message}`,
@@ -321,8 +395,12 @@ export abstract class BaseService<
       }
     }
     if (error instanceof Prisma.PrismaClientValidationError) {
-      throw new BadRequestException(`無效嘅 ${String(this.entityName)} 數據: ${error.message}`);
+      throw new BadRequestException(
+        `無效嘅 ${String(this.entityName)} 數據: ${error.message}`,
+      );
     }
-    throw new InternalServerErrorException(`${operation} ${String(this.entityName)} 失敗: ${errorMsg}`);
+    throw new InternalServerErrorException(
+      `${operation} ${String(this.entityName)} 失敗: ${errorMsg}`,
+    );
   }
 }

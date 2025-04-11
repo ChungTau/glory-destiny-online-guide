@@ -56,8 +56,10 @@ function mergePrismaFiles() {
     '// Enums',
     ...enums,
     '// Models',
-    ...models
-  ].filter(Boolean).join('\n\n');
+    ...models,
+  ]
+    .filter(Boolean)
+    .join('\n\n');
 
   // 寫入最終檔案
   fs.writeFileSync(outputFile, mergedSchema);

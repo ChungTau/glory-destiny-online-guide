@@ -8,9 +8,6 @@ import { Prisma } from '@glory-destiny-online-guide/prisma';
 @Module({
   imports: [BaseModule],
   controllers: [PetController],
-  providers: [
-    CustomPetService,
-    provideBaseService(Prisma.ModelName.Pet)
-  ],
+  providers: [CustomPetService, provideBaseService(Prisma.ModelName.Pet)],
 })
 export class PetModule {}

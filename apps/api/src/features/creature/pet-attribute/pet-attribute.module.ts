@@ -10,7 +10,7 @@ import { Prisma } from '@glory-destiny-online-guide/prisma';
   controllers: [PetAttributeController],
   providers: [
     CustomPetAttributeService,
-    provideBaseService(Prisma.ModelName.PetAttribute)
+    provideBaseService(Prisma.ModelName.PetAttribute),
   ],
 })
 export class PetAttributeModule {}

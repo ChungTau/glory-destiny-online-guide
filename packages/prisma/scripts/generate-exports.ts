@@ -9,10 +9,11 @@ const outputFile = path.join(generatedDir, 'index.ts');
 function generateExports() {
   // 編譯 entity-include.ts 成 entity-include.js
 
-  const content = [
-    '// Auto-generated exports from generated/',
-    "export * from './client/index.js';",
-  ].join('\n') + '\n';
+  const content =
+    [
+      '// Auto-generated exports from generated/',
+      "export * from './client/index.js';",
+    ].join('\n') + '\n';
 
   fs.writeFileSync(outputFile, content);
   console.log('Generated packages/prisma/generated/index.ts successfully');

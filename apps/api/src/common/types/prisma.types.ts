@@ -37,26 +37,34 @@ export type EntityPayload<
   Prisma.TypeMap['model'][T]['payload'] &
   (Args extends { include: infer I }
     ? {
-        [K in keyof I & keyof Prisma.TypeMap['model'][T]['fields']]: I[K] extends true
+        [K in keyof I &
+          keyof Prisma.TypeMap['model'][T]['fields']]: I[K] extends true
           ? Prisma.TypeMap['model'][T]['fields'][K] extends { type: infer R }
             ? R
             : never
           : I[K] extends object
             ? Prisma.TypeMap['model'][T]['fields'][K] extends { type: infer R }
-              ? EntityPayload<R extends Prisma.ModelName ? R : never, { include: I[K] }>
+              ? EntityPayload<
+                  R extends Prisma.ModelName ? R : never,
+                  { include: I[K] }
+                >
               : never
             : never;
       }
     : {}) &
   (Args extends { select: infer S }
     ? {
-        [K in keyof S & keyof Prisma.TypeMap['model'][T]['fields']]: S[K] extends true
+        [K in keyof S &
+          keyof Prisma.TypeMap['model'][T]['fields']]: S[K] extends true
           ? Prisma.TypeMap['model'][T]['fields'][K] extends { type: infer R }
             ? R
             : Prisma.TypeMap['model'][T]['fields'][K]
           : S[K] extends object
             ? Prisma.TypeMap['model'][T]['fields'][K] extends { type: infer R }
-              ? EntityPayload<R extends Prisma.ModelName ? R : never, { select: S[K] }>
+              ? EntityPayload<
+                  R extends Prisma.ModelName ? R : never,
+                  { select: S[K] }
+                >
               : never
             : never;
       }
@@ -65,11 +73,13 @@ export type EntityPayload<
 // 帶 Include 嘅 Payload
 export type EntityPayloadWithInclude<
   T extends Prisma.ModelName,
-  I extends Prisma.TypeMap['model'][T]['operations']['findUnique']['args']['include'] = {}, // 用 Prisma Include 類型
+  I extends
+    Prisma.TypeMap['model'][T]['operations']['findUnique']['args']['include'] = {}, // 用 Prisma Include 類型
 > = EntityPayload<T, { include: I }>;
 
 // 帶 Select 嘅 Payload
 export type EntityPayloadWithSelect<
   T extends Prisma.ModelName,
-  S extends Prisma.TypeMap['model'][T]['operations']['findUnique']['args']['select'] = {}, // 用 Prisma Select 類型
+  S extends
+    Prisma.TypeMap['model'][T]['operations']['findUnique']['args']['select'] = {}, // 用 Prisma Select 類型
 > = EntityPayload<T, { select: S }>;

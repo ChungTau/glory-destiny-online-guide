@@ -8,9 +8,6 @@ import { Prisma } from '@glory-destiny-online-guide/prisma';
 @Module({
   imports: [BaseModule],
   controllers: [JobController],
-  providers: [
-    CustomJobService,
-    provideBaseService(Prisma.ModelName.Job)
-  ],
+  providers: [CustomJobService, provideBaseService(Prisma.ModelName.Job)],
 })
 export class JobModule {}

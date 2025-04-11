@@ -7,7 +7,8 @@ import { Prisma } from '@glory-destiny-online-guide/prisma';
 
 @Injectable()
 export class JunctionServiceFactory {
-  private services: Map<string, JunctionService<any, any, any, any>> = new Map();
+  private services: Map<string, JunctionService<any, any, any, any>> =
+    new Map();
 
   constructor(
     private readonly prisma: PrismaService,

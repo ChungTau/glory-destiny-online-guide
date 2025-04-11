@@ -10,7 +10,7 @@ import { Prisma } from '@glory-destiny-online-guide/prisma';
   controllers: [CreatureController],
   providers: [
     CustomCreatureService,
-    provideBaseService(Prisma.ModelName.Creature)
+    provideBaseService(Prisma.ModelName.Creature),
   ],
 })
 export class CreatureModule {}

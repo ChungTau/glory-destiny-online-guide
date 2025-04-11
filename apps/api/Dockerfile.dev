@@ -1,13 +1,6 @@
-FROM node:20-alpine
-
-WORKDIR /app
-RUN npm install -g pnpm 
+FROM gdo-guide-base:latest AS api-dev
+WORKDIR /app/apps/api
 COPY package.json pnpm-lock.yaml ./
-COPY pnpm-workspace.yaml tsconfig.base.json ./
-COPY apps/api/package.json apps/api/
-COPY packages/prisma/package.json packages/prisma/
-RUN pnpm install --frozen-lockfile
-COPY apps/api ./apps/api
-COPY packages/prisma ./packages/prisma
+RUN npm install -g pnpm && pnpm install && npm install -g @nestjs/cli
 EXPOSE 4000
-CMD ["pnpm", "--filter=@glory-destiny-online-guide/api", "run", "start:dev"]
+CMD ["pnpm", "run", "dev"]

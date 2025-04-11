@@ -8,9 +8,6 @@ import { Prisma } from '@glory-destiny-online-guide/prisma';
 @Module({
   imports: [BaseModule],
   controllers: [AreaController],
-  providers: [
-    CustomAreaService,
-    provideBaseService(Prisma.ModelName.Area)
-  ],
+  providers: [CustomAreaService, provideBaseService(Prisma.ModelName.Area)],
 })
 export class AreaModule {}

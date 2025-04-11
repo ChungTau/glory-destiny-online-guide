@@ -6,7 +6,10 @@ import { EntityPayloadWithInclude } from 'src/common/types/prisma.types';
 
 @Controller('dungeons')
 export class DungeonController extends BaseController<
-  EntityPayloadWithInclude<typeof Prisma.ModelName.Dungeon, Prisma.DungeonInclude>,
+  EntityPayloadWithInclude<
+    typeof Prisma.ModelName.Dungeon,
+    Prisma.DungeonInclude
+  >,
   typeof Prisma.ModelName.Dungeon,
   Prisma.DungeonInclude,
   Prisma.DungeonSelect

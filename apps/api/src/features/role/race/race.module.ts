@@ -8,9 +8,6 @@ import { Prisma } from '@glory-destiny-online-guide/prisma';
 @Module({
   imports: [BaseModule],
   controllers: [RaceController],
-  providers: [
-    CustomRaceService,
-    provideBaseService(Prisma.ModelName.Race)
-  ],
+  providers: [CustomRaceService, provideBaseService(Prisma.ModelName.Race)],
 })
 export class RaceModule {}

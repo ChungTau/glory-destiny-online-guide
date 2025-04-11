@@ -2,9 +2,8 @@
   "name": "@glory-destiny-online-guide/prisma",
   "version": "1.0.0",
   "type": "commonjs",
-  "main": "generated/index.ts",
+  "main": "generated/index.js",
   "types": "generated/index.ts",
-  "description": "",
   "scripts": {
     "merge-prisma": "ts-node --transpile-only scripts/merge-prisma.ts",
     "generate": "prisma generate --schema=./schema/schema.prisma",
@@ -13,10 +12,14 @@
     "migrate:deploy": "prisma migrate deploy --schema=./schema/schema.prisma",
     "build": "pnpm run merge-prisma && pnpm run generate && pnpm run generate-exports",
     "start": "pnpm run migrate:deploy",
-    "watch": "ts-node-dev --respawn --watch schema/enums,schema/models -- scripts/merge-prisma.ts"
+    "watch": "ts-node-dev --respawn --watch schema/enums,schema/models -- scripts/merge-prisma.ts",
+    "lint": "eslint . --ext .ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.6.4"
+  "dependencies": {
+    "@prisma/client": "6.6.0"
+  },
+  "devDependencies": {
+    "prisma": "6.6.0",
+    "@types/node": "^22.14.0"
+  }
 }

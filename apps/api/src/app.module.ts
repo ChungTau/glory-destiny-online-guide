@@ -21,11 +21,21 @@ import { CoreModule } from './core/core.module';
     }),
     CoreModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'node_modules', '@bull-board', 'ui', 'dist'),
+      rootPath: join(
+        __dirname,
+        '..',
+        'node_modules',
+        '@bull-board',
+        'ui',
+        'dist',
+      ),
       serveRoot: '/queues',
     } as const),
-    BullBoardModule.forRoot({ route: '/queues', adapter: ExpressAdapter as any }),
-    FeatureModule
+    BullBoardModule.forRoot({
+      route: '/queues',
+      adapter: ExpressAdapter as any,
+    }),
+    FeatureModule,
   ],
   controllers: [],
 })

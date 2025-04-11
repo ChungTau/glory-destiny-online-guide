@@ -5,5 +5,8 @@ import { RedisService } from 'src/core/redis/redis.service';
 
 @Injectable()
 export class CustomMonsterService {
-  constructor(private prisma: PrismaService, private redis: RedisService) {}
+  constructor(
+    private prisma: PrismaService,
+    private redis: RedisService,
+  ) {}
 }
