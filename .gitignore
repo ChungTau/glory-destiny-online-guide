@@ -5,13 +5,17 @@
 
 # Node.js 同 pnpm 相關
 node_modules/
-pnpm-lock.yaml  # 可選，視乎你想唔想版本控制 lockfile
+pnpm-lock.yaml
+apps/api/dist/
+packages/prisma/generated/
+apps/cms/.next
 .pnpm-store/
 migrations/
 
 # 生成文件
 dist/
 generated/
+.next/
 
 # 日誌同臨時文件
 *.log
