@@ -1,21 +1,19 @@
+// packages/ui/eslint.config.mjs
 import rootConfig from '../../eslint.config.mjs';
-import pluginReact from 'eslint-plugin-react';
 
 export default [
   ...rootConfig,
   {
     files: ['src/**/*.{ts,tsx}'],
+    ignores: ['dist/**/*', 'eslint.config.mjs', 'postcss.config.mjs'],
     languageOptions: {
-      globals: {
-        browser: true,
+      parserOptions: {
+        project: './tsconfig.json',
+        tsconfigRootDir: import.meta.dirname,
       },
     },
-    plugins: {
-      react: pluginReact,
-    },
     rules: {
-      ...pluginReact.configs.recommended.rules,
-      'react/prop-types': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn', // 可選：同根目錄一致
     },
   },
 ];

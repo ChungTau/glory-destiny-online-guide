@@ -57,7 +57,7 @@ export abstract class BaseService<
       | undefined, // 明確加 undefined
     include?: I,
     select?: S,
-    suffix?: string,
+    suffix?: string
   ): string {
     const idStr =
       id === undefined
@@ -81,7 +81,7 @@ export abstract class BaseService<
     } catch (error) {
       this.logger.error(
         `快取讀取失敗，key: ${key}`,
-        error instanceof Error ? error.stack : undefined,
+        error instanceof Error ? error.stack : undefined
       );
       return null;
     }
@@ -90,7 +90,7 @@ export abstract class BaseService<
   protected async setToCache<TData>(
     key: string,
     value: TData,
-    ttl = 3600,
+    ttl = 3600
   ): Promise<void> {
     if (!this.redis) return;
     try {
@@ -99,7 +99,7 @@ export abstract class BaseService<
     } catch (error) {
       this.logger.error(
         `快取寫入失敗，key: ${key}`,
-        error instanceof Error ? error.stack : undefined,
+        error instanceof Error ? error.stack : undefined
       );
     }
   }
@@ -112,7 +112,7 @@ export abstract class BaseService<
       | PaginatedQueryParams
       | EntityWhereInput<K>
       | undefined,
-    wildcard = false,
+    wildcard = false
   ): Promise<void> {
     if (!this.redis) {
       this.logger.debug('無 Redis 實例，跳過快取失效');
@@ -128,7 +128,7 @@ export abstract class BaseService<
 
         if (keys.length > 0) {
           this.logger.debug(
-            `搵到 ${keys.length} 個匹配嘅快取 key: ${keys.join(', ')}`,
+            `搵到 ${keys.length} 個匹配嘅快取 key: ${keys.join(', ')}`
           );
           await this.redis.del(keys);
           this.logger.debug(`成功清除 ${keys.length} 個快取 key`);
@@ -145,7 +145,7 @@ export abstract class BaseService<
       const errorMsg = error instanceof Error ? error.message : String(error);
       this.logger.error(
         `快取清除失敗，idOrQuery: ${JSON.stringify(idOrQuery)}, wildcard: ${wildcard}, 錯誤: ${errorMsg}`,
-        error instanceof Error ? error.stack : undefined,
+        error instanceof Error ? error.stack : undefined
       );
     }
   }
@@ -178,7 +178,7 @@ export abstract class BaseService<
   async createMany(
     data: EntityCreateManyInput<K>,
     include?: I,
-    select?: S,
+    select?: S
   ): Promise<T[]> {
     try {
       const result = await this.prisma[String(this.entityName)].createMany({
@@ -206,7 +206,7 @@ export abstract class BaseService<
       });
       if (!result)
         throw new NotFoundException(
-          `${String(this.entityName)} ID ${id} 搵唔到`,
+          `${String(this.entityName)} ID ${id} 搵唔到`
         );
       await this.setToCache(cacheKey, result);
       return result as T;
@@ -216,7 +216,7 @@ export abstract class BaseService<
   }
 
   async findMany(
-    params: QueryParams & { include?: I; select?: S } = {},
+    params: QueryParams & { include?: I; select?: S } = {}
   ): Promise<T[]> {
     const { where, sort, order, include, select } = params;
     const cacheKey = this.getCacheKey({ where, sort, order }, include, select);
@@ -238,7 +238,7 @@ export abstract class BaseService<
   }
 
   async findManyPaginated(
-    params: PaginatedQueryParams & { include?: I; select?: S } = {},
+    params: PaginatedQueryParams & { include?: I; select?: S } = {}
   ): Promise<PaginatedResult<T>> {
     const {
       page = 1,
@@ -255,7 +255,7 @@ export abstract class BaseService<
     const cacheKey = this.getCacheKey(
       { page, limit, sort, order, where },
       include,
-      select,
+      select
     );
     const cached = await this.getFromCache<PaginatedResult<T>>(cacheKey);
     if (cached) return cached;
@@ -295,7 +295,7 @@ export abstract class BaseService<
 
   async updateMany(
     where: EntityWhereInput<K>,
-    data: EntityUpdateManyInput<K>,
+    data: EntityUpdateManyInput<K>
   ): Promise<Prisma.BatchPayload> {
     try {
       const result = await this.prisma[String(this.entityName)].updateMany({
@@ -310,16 +310,16 @@ export abstract class BaseService<
   }
 
   async bulkUpdate(
-    updates: { id: number; data: EntityUpdateInput<K> }[],
+    updates: { id: number; data: EntityUpdateInput<K> }[]
   ): Promise<T[]> {
     try {
       const results = await Promise.all(
         updates.map(({ id, data }) =>
-          this.prisma[String(this.entityName)].update({ where: { id }, data }),
-        ),
+          this.prisma[String(this.entityName)].update({ where: { id }, data })
+        )
       );
       await Promise.all(
-        updates.map(({ id }) => this.invalidateCache(id, true)),
+        updates.map(({ id }) => this.invalidateCache(id, true))
       );
       return results as T[];
     } catch (error) {
@@ -366,41 +366,41 @@ export abstract class BaseService<
   private handlePrismaError(
     error: unknown,
     operation: string,
-    id?: number,
+    id?: number
   ): never {
     const idMsg = id ? `ID ${id}` : '';
     const errorMsg = error instanceof Error ? error.message : String(error);
     this.logger.error(
       `${operation} ${String(this.entityName)} ${idMsg} 失敗: ${errorMsg}`,
-      error instanceof Error ? error.stack : undefined,
+      error instanceof Error ? error.stack : undefined
     );
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       switch (error.code) {
         case 'P2002':
           throw new BadRequestException(
-            `${String(this.entityName)} 唯一字段衝突`,
+            `${String(this.entityName)} 唯一字段衝突`
           );
         case 'P2025':
           throw new NotFoundException(
-            `${String(this.entityName)} ${idMsg} 搵唔到`,
+            `${String(this.entityName)} ${idMsg} 搵唔到`
           );
         case 'P2003':
           throw new BadRequestException(
-            `${String(this.entityName)} 外鍵約束失敗`,
+            `${String(this.entityName)} 外鍵約束失敗`
           );
         default:
           throw new InternalServerErrorException(
-            `${operation} ${String(this.entityName)} 失敗: ${error.message}`,
+            `${operation} ${String(this.entityName)} 失敗: ${error.message}`
           );
       }
     }
     if (error instanceof Prisma.PrismaClientValidationError) {
       throw new BadRequestException(
-        `無效嘅 ${String(this.entityName)} 數據: ${error.message}`,
+        `無效嘅 ${String(this.entityName)} 數據: ${error.message}`
       );
     }
     throw new InternalServerErrorException(
-      `${operation} ${String(this.entityName)} 失敗: ${errorMsg}`,
+      `${operation} ${String(this.entityName)} 失敗: ${errorMsg}`
     );
   }
 }

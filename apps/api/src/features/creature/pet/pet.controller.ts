@@ -13,7 +13,7 @@ export class PetController extends BaseController<
 > {
   constructor(
     @Inject(`${Prisma.ModelName.Pet}Service`)
-    protected readonly service: any, // 用動態生成嘅 Service
+    protected readonly service: any // 用動態生成嘅 Service
   ) {
     super();
   }

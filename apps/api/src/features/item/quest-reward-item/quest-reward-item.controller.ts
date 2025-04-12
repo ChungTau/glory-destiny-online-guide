@@ -24,7 +24,7 @@ export class QuestRewardItemController extends JunctionController<
       typeof Prisma.ModelName.QuestRewardItem,
       Prisma.QuestRewardItemInclude,
       Prisma.QuestRewardItemSelect
-    >,
+    >
   ) {
     super();
   }

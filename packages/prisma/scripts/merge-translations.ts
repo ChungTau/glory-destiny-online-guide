@@ -6,7 +6,10 @@ const clientTranslationsDir = path.join(rootDir, 'apps/client/translations');
 const cmsTranslationsDir = path.join(rootDir, 'apps/cms/translations');
 const outputDir = path.join(__dirname, '../generated/translations');
 
-function deepMerge(target: any, source: any): any {
+function deepMerge(
+  target: Record<string, unknown>,
+  source: Record<string, unknown>
+): Record<string, unknown> {
   const output = { ...target };
   for (const key in source) {
     if (
@@ -14,7 +17,10 @@ function deepMerge(target: any, source: any): any {
       typeof source[key] === 'object' &&
       !Array.isArray(source[key])
     ) {
-      output[key] = deepMerge(output[key] || {}, source[key]);
+      output[key] = deepMerge(
+        (output[key] as Record<string, unknown>) || {},
+        source[key] as Record<string, unknown>
+      );
     } else {
       output[key] = source[key];
     }
@@ -22,8 +28,10 @@ function deepMerge(target: any, source: any): any {
   return output;
 }
 
-async function readJsonFiles(dir: string): Promise<Record<string, any>> {
-  const translations: Record<string, any> = {};
+async function readJsonFiles(
+  dir: string
+): Promise<Record<string, Record<string, unknown>>> {
+  const translations: Record<string, Record<string, unknown>> = {};
   try {
     const files = (await fs.readdir(dir, { withFileTypes: true }))
       .filter((file) => file.isFile() && file.name.endsWith('.json'))
@@ -34,8 +42,8 @@ async function readJsonFiles(dir: string): Promise<Record<string, any>> {
       const content = await fs.readFile(path.join(dir, file), 'utf-8');
       translations[lang] = JSON.parse(content);
     }
-  } catch (error) {
-    console.warn(`No translations found in ${dir}, skipping...`);
+  } catch {
+    // 靜默跳過，無需輸出
   }
   return translations;
 }
@@ -59,10 +67,7 @@ async function mergeTranslations() {
       );
       const outputFile = path.join(outputDir, `${lang}.json`);
       await fs.writeFile(outputFile, JSON.stringify(merged, null, 2), 'utf-8');
-      console.log(`Merged translations for ${lang} written to ${outputFile}`);
     }
-
-    console.log('All translations merged successfully!');
   } catch (error) {
     console.error('Error merging translations:', error);
     process.exit(1);

@@ -24,7 +24,7 @@ export class MonsterDropController extends JunctionController<
       typeof Prisma.ModelName.MonsterDrop,
       Prisma.MonsterDropInclude,
       Prisma.MonsterDropSelect
-    >,
+    >
   ) {
     super();
   }

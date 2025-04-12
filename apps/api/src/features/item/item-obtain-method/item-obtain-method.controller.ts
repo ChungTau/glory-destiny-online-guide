@@ -24,7 +24,7 @@ export class ItemObtainMethodController extends JunctionController<
       typeof Prisma.ModelName.ItemObtainMethod,
       Prisma.ItemObtainMethodInclude,
       Prisma.ItemObtainMethodSelect
-    >,
+    >
   ) {
     super();
   }

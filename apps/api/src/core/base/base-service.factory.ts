@@ -12,11 +12,11 @@ export class BaseServiceFactory {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly redis: RedisService,
+    private readonly redis: RedisService
   ) {}
 
   getService<K extends Prisma.ModelName>(
-    entityName: K,
+    entityName: K
   ): BaseService<
     EntityPayloadWithInclude<
       K,

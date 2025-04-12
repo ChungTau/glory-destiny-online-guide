@@ -1,4 +1,9 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  Logger,
+} from '@nestjs/common';
 import { PrismaClient } from '@glory-destiny-online-guide/prisma';
 
 @Injectable()
@@ -16,13 +21,21 @@ export class PrismaService
     });
   }
 
+  private readonly logger = new Logger(PrismaService.name);
+
   async onModuleInit() {
-    await this.$connect(); // 喺模塊初始化時連繫數據庫
-    console.log('Prisma Client connected to the database');
+    try {
+      await this.$connect();
+      this.logger.log('Prisma connected'); // 取代 console.log
+    } catch (err) {
+      this.logger.error('Prisma error', err); // 取代 console.log
+    }
   }
 
   async onModuleDestroy() {
     await this.$disconnect(); // 喺模塊銷毀時斷開連繫
-    console.log('Prisma Client disconnected from the database');
+    this.logger.log('Prisma Client disconnected from the database');
   }
+
+  [key: string]: any;
 }

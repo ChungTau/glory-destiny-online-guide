@@ -16,7 +16,7 @@ export class MonsterController extends BaseController<
 > {
   constructor(
     @Inject(`${Prisma.ModelName.Monster}Service`)
-    protected readonly service: any, // 用動態生成嘅 Service
+    protected readonly service: any // 用動態生成嘅 Service
   ) {
     super();
   }

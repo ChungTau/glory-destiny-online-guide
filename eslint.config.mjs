@@ -1,45 +1,89 @@
 // eslint.config.mjs (根目錄)
 import pluginJs from '@eslint/js';
-import pluginTs from 'typescript-eslint';
+import pluginTs from '@typescript-eslint/eslint-plugin';
+import parserTs from '@typescript-eslint/parser';
 import pluginPrettier from 'eslint-plugin-prettier';
+import configPrettier from 'eslint-config-prettier';
+import pluginReact from 'eslint-plugin-react';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
 
 export default [
-  // 基礎 JS 配置
-  pluginJs.configs.recommended,
-
-  // TypeScript 配置
-  ...pluginTs.configs.recommended,
-
-  // 全局設置
   {
-    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
+    // 全局 ignores
     ignores: [
+      '**/.next/**',
+      '**/static/**',
       '**/node_modules/**',
       '**/dist/**',
-      '**/.next/**',
+      '**/build/**',
+      '**/coverage/**',
       '**/generated/**',
+      '**/prisma/generated/**',
+      '**/test/**',
+      '**/*.spec.ts',
+      '**/eslint.config.mjs',
+      '**/postcss.config.mjs',
+      '**/*.d.ts',
     ],
+  },
+  pluginJs.configs.recommended,
+  {
+    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
     languageOptions: {
       globals: {
-        node: true, // Node.js 環境
+        node: true,
       },
+      parser: parserTs,
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
+        project: true,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
     plugins: {
-      prettier: pluginPrettier, // 只定義 Prettier 插件
+      '@typescript-eslint': pluginTs,
+      prettier: pluginPrettier,
     },
     rules: {
-      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
-        { argsIgnorePattern: '^_' },
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
-      ...pluginPrettier.configs.recommended.rules,
-      'prettier/prettier': 'error',
+      eqeqeq: ['error', 'always'],
+      'no-undef': 'off',
+      ...configPrettier.rules,
+      'prettier/prettier': ['error', { singleQuote: true }],
+    },
+  },
+  {
+    files: ['**/*.tsx'],
+    languageOptions: {
+      globals: {
+        browser: true,
+        node: false,
+      },
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
+    },
+    plugins: {
+      react: pluginReact,
+      'react-hooks': pluginReactHooks,
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
+    rules: {
+      ...pluginReact.configs.recommended.rules,
+      ...pluginReactHooks.configs.recommended.rules,
+      'react/prop-types': 'off',
+      'react/react-in-jsx-scope': 'off',
     },
   },
 ];

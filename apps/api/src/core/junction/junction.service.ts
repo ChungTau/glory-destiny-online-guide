@@ -56,7 +56,7 @@ export abstract class JunctionService<
       | undefined,
     include?: I,
     select?: S,
-    suffix?: string,
+    suffix?: string
   ): string {
     const idStr = id === undefined ? '' : JSON.stringify(id); // 用 JSON.stringify 代替 toString
     const includeStr = include ? `:include:${JSON.stringify(include)}` : '';
@@ -75,7 +75,7 @@ export abstract class JunctionService<
     } catch (error) {
       this.logger.error(
         `快取讀取失敗，key: ${key}`,
-        error instanceof Error ? error.stack : undefined,
+        error instanceof Error ? error.stack : undefined
       );
       return null;
     }
@@ -84,7 +84,7 @@ export abstract class JunctionService<
   protected async setToCache<TData>(
     key: string,
     value: TData,
-    ttl = 3600,
+    ttl = 3600
   ): Promise<void> {
     if (!this.redis) return;
     try {
@@ -93,7 +93,7 @@ export abstract class JunctionService<
     } catch (error) {
       this.logger.error(
         `快取寫入失敗，key: ${key}`,
-        error instanceof Error ? error.stack : undefined,
+        error instanceof Error ? error.stack : undefined
       );
     }
   }
@@ -104,7 +104,7 @@ export abstract class JunctionService<
       | QueryParams
       | PaginatedQueryParams
       | EntityWhereInput<K>,
-    wildcard = false,
+    wildcard = false
   ): Promise<void> {
     if (!this.redis) return;
     try {
@@ -119,7 +119,7 @@ export abstract class JunctionService<
     } catch (error) {
       this.logger.error(
         `快取清除失敗`,
-        error instanceof Error ? error.stack : undefined,
+        error instanceof Error ? error.stack : undefined
       );
     }
   }
@@ -139,7 +139,7 @@ export abstract class JunctionService<
   async findOne(
     ids: { [key: string]: number },
     include?: I,
-    select?: S,
+    select?: S
   ): Promise<T> {
     const cacheKey = this.getCacheKey(ids, include, select);
     const cached = await this.getFromCache<T>(cacheKey);
@@ -153,7 +153,7 @@ export abstract class JunctionService<
       });
       if (!result)
         throw new NotFoundException(
-          `${String(this.entityName)} ${JSON.stringify(ids)} 搵唔到`,
+          `${String(this.entityName)} ${JSON.stringify(ids)} 搵唔到`
         );
       await this.setToCache(cacheKey, result);
       return result as T;
@@ -163,7 +163,7 @@ export abstract class JunctionService<
   }
 
   async findMany(
-    params: QueryParams & { include?: I; select?: S } = {},
+    params: QueryParams & { include?: I; select?: S } = {}
   ): Promise<T[]> {
     const { where, sort, order, include, select } = params;
     const cacheKey = this.getCacheKey({ where, sort, order }, include, select);
@@ -185,7 +185,7 @@ export abstract class JunctionService<
   }
 
   async findManyPaginated(
-    params: PaginatedQueryParams & { include?: I; select?: S } = {},
+    params: PaginatedQueryParams & { include?: I; select?: S } = {}
   ): Promise<PaginatedResult<T>> {
     const {
       page = 1,
@@ -202,7 +202,7 @@ export abstract class JunctionService<
     const cacheKey = this.getCacheKey(
       { page, limit, sort, order, where },
       include,
-      select,
+      select
     );
     const cached = await this.getFromCache<PaginatedResult<T>>(cacheKey);
     if (cached) return cached;
@@ -229,7 +229,7 @@ export abstract class JunctionService<
 
   async updateOne(
     ids: { [key: string]: number },
-    data: EntityUpdateInput<K>,
+    data: EntityUpdateInput<K>
   ): Promise<T> {
     try {
       const result = await this.prisma[String(this.entityName)].update({
@@ -258,36 +258,36 @@ export abstract class JunctionService<
   private handlePrismaError(
     error: unknown,
     operation: string,
-    ids?: { [key: string]: number },
+    ids?: { [key: string]: number }
   ): never {
     const idMsg = ids ? `IDs ${JSON.stringify(ids)}` : '';
     const errorMsg = error instanceof Error ? error.message : String(error);
     this.logger.error(
       `${operation} ${String(this.entityName)} ${idMsg} 失敗: ${errorMsg}`,
-      error instanceof Error ? error.stack : undefined,
+      error instanceof Error ? error.stack : undefined
     );
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       switch (error.code) {
         case 'P2002':
           throw new BadRequestException(
-            `${String(this.entityName)} 唯一字段衝突`,
+            `${String(this.entityName)} 唯一字段衝突`
           );
         case 'P2025':
           throw new NotFoundException(
-            `${String(this.entityName)} ${idMsg} 搵唔到`,
+            `${String(this.entityName)} ${idMsg} 搵唔到`
           );
         case 'P2003':
           throw new BadRequestException(
-            `${String(this.entityName)} 外鍵約束失敗`,
+            `${String(this.entityName)} 外鍵約束失敗`
           );
         default:
           throw new InternalServerErrorException(
-            `${operation} ${String(this.entityName)} 失敗: ${error.message}`,
+            `${operation} ${String(this.entityName)} 失敗: ${error.message}`
           );
       }
     }
     throw new InternalServerErrorException(
-      `${operation} ${String(this.entityName)} 失敗: ${errorMsg}`,
+      `${operation} ${String(this.entityName)} 失敗: ${errorMsg}`
     );
   }
 }

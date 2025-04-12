@@ -16,7 +16,7 @@ export class EnhancementDetailController extends BaseController<
 > {
   constructor(
     @Inject(`${Prisma.ModelName.EnhancementDetail}Service`)
-    protected readonly service: any, // 用動態生成嘅 Service
+    protected readonly service: any // 用動態生成嘅 Service
   ) {
     super();
   }

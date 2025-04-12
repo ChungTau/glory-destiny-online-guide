@@ -16,7 +16,7 @@ export class MaterialDetailController extends BaseController<
 > {
   constructor(
     @Inject(`${Prisma.ModelName.MaterialDetail}Service`)
-    protected readonly service: any, // 用動態生成嘅 Service
+    protected readonly service: any // 用動態生成嘅 Service
   ) {
     super();
   }

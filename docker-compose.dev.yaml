@@ -37,9 +37,10 @@ services:
       - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d mydb"] # 檢查 Postgres 健康
-      interval: 5s # 每 5 秒檢查一次
+      interval: 2s # 每 5 秒檢查一次
       timeout: 5s # 超時 5 秒
-      retries: 5 # 重試 5 次
+      retries: 10 # 重試 5 次
+      start_period: 10s
 
   # Redis 服務
   redis:
@@ -57,15 +58,15 @@ services:
     volumes:
       - ./packages/prisma:/app/packages/prisma # 只映射 prisma 源碼
       - prisma_generated:/app/packages/prisma/generated # 共享生成嘅 client
-      - /app/node_modules # 避免本地 node_modules 干擾
     depends_on:
+      prisma-base:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy # 等 Postgres 健康後啟動
     environment:
       - DATABASE_URL=postgresql://user:password@postgres:5432/mydb?schema=public
     command: >
-      sh -c "pnpm run migrate:dev --name init && pnpm run build && pnpm run generate && pnpm run watch"
-      # 移除 pg_isready 檢查，直接執行 Prisma 命令
+      sh -c "pnpm run migrate:dev --name init && pnpm run build"
 
   # API 服務（NestJS）
   api:
@@ -73,17 +74,16 @@ services:
       context: .
       dockerfile: apps/api/Dockerfile.dev
     volumes:
-      - ./apps/api:/app/apps/api # 只映射 api 源碼
+      - ./apps/api/src:/app/apps/api/src
+      - ./apps/api/nest-cli.json:/app/apps/api/nest-cli.json
       - prisma_generated:/app/packages/prisma/generated # 用 prisma 生成嘅 client
-      - /app/node_modules # 避免本地 node_modules 干擾
-      - /app/apps/api/dist # 避免本地 dist 干擾
     ports:
       - "4000:4000"
     depends_on:
       prisma-base:
         condition: service_completed_successfully
       prisma:
-        condition: service_started # 等 prisma 生成 client
+        condition: service_completed_successfully # 等 prisma 生成 client
       postgres:
         condition: service_healthy
       redis:
@@ -112,14 +112,13 @@ services:
       - ./apps/cms:/app/apps/cms # 只映射 cms 源碼
       - ./packages/ui:/app/packages/ui # 只映射 ui 源碼
       - prisma_generated:/app/packages/prisma/generated # 用 prisma 生成嘅 client
-      - /app/node_modules # 避免本地 node_modules 干擾
-      - /app/apps/cms/.next # 避免本地 .next 干擾
-      - /app/apps/cms/dist # 避免本地 dist 干擾
     ports:
       - "3000:3000"
     depends_on:
       prisma-base:
         condition: service_completed_successfully
+      prisma:
+        condition: service_completed_successfully # 等 prisma 生成 client
       ui-base:
         condition: service_completed_successfully
       api:

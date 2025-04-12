@@ -7,6 +7,8 @@ WORKDIR /app
 # 複製 ui 同 cms 嘅 package.json（本地 node_modules 已排除）
 COPY packages/ui/package.json ./packages/ui/
 COPY apps/cms/package.json ./apps/cms/
+COPY apps/cms/tsconfig.json ./apps/cms/
+COPY apps/cms/eslint.config.mjs ./apps/cms/
 
 # 喺容器內安裝 ui 同 cms 依賴
 RUN pnpm install --frozen-lockfile

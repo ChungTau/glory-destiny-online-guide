@@ -12,13 +12,13 @@ export class JunctionServiceFactory {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly redis: RedisService,
+    private readonly redis: RedisService
   ) {}
 
   getService<K extends Prisma.ModelName>(
     entityName: K,
     entity1Key: string,
-    entity2Key: string,
+    entity2Key: string
   ): JunctionService<
     Prisma.TypeMap['model'][K]['operations']['findUnique']['result'] | null, // 直接用 Prisma 類型
     K,

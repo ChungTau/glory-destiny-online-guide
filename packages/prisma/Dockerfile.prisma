@@ -3,3 +3,12 @@ FROM gdo-guide-prisma-base:latest AS prisma-dev
 
 # 切換到 prisma 工作目錄
 WORKDIR /app/packages/prisma
+
+# 複製源碼
+COPY packages/prisma/ ./
+
+# 安裝依賴
+RUN pnpm install --frozen-lockfile
+
+# 調試：檢查生成的文件
+RUN pnpm run build && ls -la generated/client

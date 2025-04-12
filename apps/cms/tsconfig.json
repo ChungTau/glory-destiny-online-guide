@@ -7,12 +7,14 @@
     "outDir": "./.next",
     "noEmit": true,
     "allowJs": true,
+    "baseUrl": ".", 
     "paths": {
-      "@glory-destiny-online-guide/prisma": [
-        "packages/prisma/*"
+      "@/*": ["./src/*"],
+      "@glory-destiny-online-guide/prisma/*": [
+        "../../packages/prisma/*"
       ],
       "@glory-destiny-online-guide/ui/*": [
-        "packages/ui/src/*"
+        "../../packages/ui/*"
       ]
     },
     "incremental": true,

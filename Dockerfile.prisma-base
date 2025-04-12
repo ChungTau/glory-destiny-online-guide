@@ -6,6 +6,8 @@ WORKDIR /app
 
 # 複製 prisma 嘅 package.json（本地 node_modules 已排除）
 COPY packages/prisma/package.json ./packages/prisma/
+COPY packages/prisma/tsconfig.json ./packages/prisma/
+COPY packages/prisma/eslint.config.mjs ./packages/prisma/
 
 # 喺容器內安裝 prisma 依賴
 RUN pnpm install --frozen-lockfile

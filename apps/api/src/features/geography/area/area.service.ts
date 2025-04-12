@@ -7,7 +7,7 @@ import { RedisService } from 'src/core/redis/redis.service';
 export class CustomAreaService {
   constructor(
     private prisma: PrismaService,
-    private redis: RedisService,
+    private redis: RedisService
   ) {}
 
   // Custom methods

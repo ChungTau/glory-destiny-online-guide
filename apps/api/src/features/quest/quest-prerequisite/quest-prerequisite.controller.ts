@@ -24,7 +24,7 @@ export class QuestPrerequisiteController extends JunctionController<
       typeof Prisma.ModelName.QuestPrerequisite,
       Prisma.QuestPrerequisiteInclude,
       Prisma.QuestPrerequisiteSelect
-    >,
+    >
   ) {
     super();
   }

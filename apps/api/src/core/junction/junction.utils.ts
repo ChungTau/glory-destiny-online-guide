@@ -6,7 +6,7 @@ import { Prisma } from '@glory-destiny-online-guide/prisma';
 export function provideJunctionService<K extends Prisma.ModelName>(
   entityName: K,
   entity1Key: string,
-  entity2Key: string,
+  entity2Key: string
 ): Provider {
   return {
     provide: `${entityName}Service`,

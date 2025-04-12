@@ -7,6 +7,6 @@ import { RedisService } from 'src/core/redis/redis.service';
 export class CustomRaceService {
   constructor(
     private prisma: PrismaService,
-    private redis: RedisService,
+    private redis: RedisService
   ) {}
 }

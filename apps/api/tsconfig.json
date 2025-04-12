@@ -2,9 +2,15 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": ".", // 改為專案根目錄（/app/apps/api/）
+    "experimentalDecorators": true, // 啟用裝飾器
+    "emitDecoratorMetadata": true,
+    "paths": {
+      "src/*": ["./src/*"], // 相對於 baseUrl，映射到 apps/api/src/
+      "@glory-destiny-online-guide/prisma/*": ["../../packages/prisma/*"] // 映射到 Prisma Client
+    }
   },
   "include": ["src/**/*", "test/**/*"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "node_modules", "test"]
 }

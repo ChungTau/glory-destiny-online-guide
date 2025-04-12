@@ -24,7 +24,7 @@ export class PetSkillLinkController extends JunctionController<
       typeof Prisma.ModelName.PetSkillLink,
       Prisma.PetSkillLinkInclude,
       Prisma.PetSkillLinkSelect
-    >,
+    >
   ) {
     super();
   }

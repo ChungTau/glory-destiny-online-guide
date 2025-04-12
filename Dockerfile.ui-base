@@ -6,6 +6,9 @@ WORKDIR /app
 
 # 複製 ui 嘅 package.json（本地 node_modules 已排除）
 COPY packages/ui/package.json ./packages/ui/
+COPY packages/ui/tsconfig.json ./packages/ui/
+COPY packages/ui/eslint.config.mjs ./packages/ui/
+COPY packages/ui/postcss.config.mjs ./packages/ui/
 
 # 喺容器內安裝 ui 依賴
 RUN pnpm install --frozen-lockfile

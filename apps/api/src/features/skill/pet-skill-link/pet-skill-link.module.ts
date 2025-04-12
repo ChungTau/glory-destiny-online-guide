@@ -12,7 +12,7 @@ import { Prisma } from '@glory-destiny-online-guide/prisma';
     provideJunctionService(
       Prisma.ModelName.PetSkillLink,
       'petId',
-      'petSkillId',
+      'petSkillId'
     ),
   ],
 })

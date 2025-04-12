@@ -41,7 +41,7 @@ export abstract class JunctionController<
     @Query() query: PaginatedQueryParams,
     @Query('where') whereStr?: string,
     @Query('include') includeStr?: string,
-    @Query('select') selectStr?: string,
+    @Query('select') selectStr?: string
   ): Promise<PaginatedResult<T>> {
     const include = this.parseInclude(includeStr);
     const select = this.parseSelect(selectStr);
@@ -62,7 +62,7 @@ export abstract class JunctionController<
   async findOne(
     @Query('ids') idsStr: string,
     @Query('include') includeStr?: string,
-    @Query('select') selectStr?: string,
+    @Query('select') selectStr?: string
   ): Promise<T> {
     const ids = this.parseIds(idsStr);
     const include = this.parseInclude(includeStr);
@@ -75,7 +75,7 @@ export abstract class JunctionController<
   @Patch('update')
   async update(
     @Query('ids') idsStr: string,
-    @Body() updateDto: EntityUpdateInput<K>,
+    @Body() updateDto: EntityUpdateInput<K>
   ): Promise<T> {
     const ids = this.parseIds(idsStr);
     return this.service.updateOne(ids, updateDto);

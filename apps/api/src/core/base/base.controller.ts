@@ -41,7 +41,7 @@ export abstract class BaseController<
 
   @Post('bulk')
   async bulkCreate(
-    @Body() createDtos: EntityCreateInput<K>[],
+    @Body() createDtos: EntityCreateInput<K>[]
   ): Promise<Prisma.BatchPayload> {
     if (!Array.isArray(createDtos) || createDtos.length === 0) {
       throw new BadRequestException('createDtos 必須係非空數組');
@@ -53,7 +53,7 @@ export abstract class BaseController<
   async createMany(
     @Body() createManyDto: EntityCreateManyInput<K>,
     @Query('include') includeStr?: string,
-    @Query('select') selectStr?: string,
+    @Query('select') selectStr?: string
   ): Promise<T[]> {
     const include = this.parseInclude(includeStr);
     const select = this.parseSelect(selectStr);
@@ -69,7 +69,7 @@ export abstract class BaseController<
     @Query() query: PaginatedQueryParams,
     @Query('where') whereStr?: string,
     @Query('include') includeStr?: string,
-    @Query('select') selectStr?: string,
+    @Query('select') selectStr?: string
   ): Promise<PaginatedResult<T>> {
     const include = this.parseInclude(includeStr);
     const select = this.parseSelect(selectStr);
@@ -90,7 +90,7 @@ export abstract class BaseController<
   async findOne(
     @Param('id', ParseIntPipe) id: number,
     @Query('include') includeStr?: string,
-    @Query('select') selectStr?: string,
+    @Query('select') selectStr?: string
   ): Promise<T> {
     const include = this.parseInclude(includeStr);
     const select = this.parseSelect(selectStr);
@@ -102,7 +102,7 @@ export abstract class BaseController<
   @Patch()
   async updateMany(
     @Query('where') whereStr: string,
-    @Body() updateDto: EntityUpdateManyInput<K>,
+    @Body() updateDto: EntityUpdateManyInput<K>
   ): Promise<Prisma.BatchPayload> {
     const where = this.parseWhere(whereStr);
     return this.service.updateMany(where, updateDto);
@@ -110,7 +110,7 @@ export abstract class BaseController<
 
   @Patch('bulk')
   async bulkUpdate(
-    @Body() updates: { id: number; data: EntityUpdateInput<K> }[],
+    @Body() updates: { id: number; data: EntityUpdateInput<K> }[]
   ): Promise<T[]> {
     if (!Array.isArray(updates) || updates.length === 0) {
       throw new BadRequestException('updates 必須係非空數組');
@@ -121,14 +121,14 @@ export abstract class BaseController<
   @Patch(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateDto: EntityUpdateInput<K>,
+    @Body() updateDto: EntityUpdateInput<K>
   ): Promise<T> {
     return this.service.updateOne(id, updateDto);
   }
 
   @Delete()
   async removeMany(
-    @Query('where') whereStr: string,
+    @Query('where') whereStr: string
   ): Promise<Prisma.BatchPayload> {
     const where = this.parseWhere(whereStr);
     return this.service.removeMany(where);

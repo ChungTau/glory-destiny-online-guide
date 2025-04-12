@@ -1,23 +1,24 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-// 定義generated目錄同輸出檔案
+// 定義 generated 目錄同輸出檔案
 const generatedDir = path.join(__dirname, '../generated');
-const outputFile = path.join(generatedDir, 'index.ts');
+const outputFile = path.join(generatedDir, 'index.js');
+
+// 確保 generated 目錄存在
+if (!fs.existsSync(generatedDir)) {
+  fs.mkdirSync(generatedDir, { recursive: true });
+}
 
 // 生成固定嘅 export 內容
 function generateExports() {
-  // 編譯 entity-include.ts 成 entity-include.js
-
   const content =
     [
       '// Auto-generated exports from generated/',
-      "export * from './client/index.js';",
+      "module.exports = require('./client/index.js');",
     ].join('\n') + '\n';
 
   fs.writeFileSync(outputFile, content);
-  console.log('Generated packages/prisma/generated/index.ts successfully');
-  console.log('Hardcoded content:\n', content);
 }
 
 // 執行

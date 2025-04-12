@@ -24,7 +24,7 @@ export class JobSkillController extends JunctionController<
       typeof Prisma.ModelName.JobSkill,
       Prisma.JobSkillInclude,
       Prisma.JobSkillSelect
-    >,
+    >
   ) {
     super();
   }

@@ -27,13 +27,13 @@ import { CoreModule } from './core/core.module';
         'node_modules',
         '@bull-board',
         'ui',
-        'dist',
+        'dist'
       ),
       serveRoot: '/queues',
     } as const),
     BullBoardModule.forRoot({
       route: '/queues',
-      adapter: ExpressAdapter as any,
+      adapter: ExpressAdapter,
     }),
     FeatureModule,
   ],

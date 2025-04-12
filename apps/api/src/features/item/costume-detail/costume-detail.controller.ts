@@ -16,7 +16,7 @@ export class CostumeDetailController extends BaseController<
 > {
   constructor(
     @Inject(`${Prisma.ModelName.CostumeDetail}Service`)
-    protected readonly service: any, // 用動態生成嘅 Service
+    protected readonly service: any // 用動態生成嘅 Service
   ) {
     super();
   }

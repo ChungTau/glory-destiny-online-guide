@@ -13,7 +13,7 @@ export class SkillController extends BaseController<
 > {
   constructor(
     @Inject(`${Prisma.ModelName.Skill}Service`)
-    protected readonly service: any, // 用動態生成嘅 Service
+    protected readonly service: any // 用動態生成嘅 Service
   ) {
     super();
   }

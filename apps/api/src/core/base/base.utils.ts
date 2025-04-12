@@ -4,7 +4,7 @@ import { BaseServiceFactory } from './base-service.factory';
 import { Prisma } from '@glory-destiny-online-guide/prisma';
 
 export function provideBaseService<K extends Prisma.ModelName>(
-  entityName: K,
+  entityName: K
 ): Provider {
   return {
     provide: `${entityName}Service`,

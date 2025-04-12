@@ -8,7 +8,7 @@ WORKDIR /app
 RUN npm install -g pnpm@10.6.4
 
 # 複製根目錄配置文件（.dockerignore 會排除 node_modules）
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json eslint.config.mjs ./
 
 # 只裝開發依賴，喺容器內生成 node_modules
-RUN pnpm install --frozen-lockfile --only=dev
+RUN pnpm install --frozen-lockfile
