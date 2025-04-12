@@ -1,10 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": ".",
+    "paths": {
+      "@glory-destiny-online-guide/ui/*": ["./src/*"]
+    },
     "declaration": true
   },
-  "include": ["src/**/*"],
+  "include": ["."],
   "exclude": ["node_modules", "dist"]
 }
