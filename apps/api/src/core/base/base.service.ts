@@ -51,8 +51,8 @@ export abstract class BaseService<
     id:
       | string
       | number
-      | QueryParams
-      | PaginatedQueryParams
+      | QueryParams<K>
+      | PaginatedQueryParams<K>
       | EntityWhereInput<K>
       | undefined, // 明確加 undefined
     include?: I,
@@ -108,8 +108,8 @@ export abstract class BaseService<
     idOrQuery:
       | number
       | string
-      | QueryParams
-      | PaginatedQueryParams
+      | QueryParams<K>
+      | PaginatedQueryParams<K>
       | EntityWhereInput<K>
       | undefined,
     wildcard = false
@@ -216,7 +216,7 @@ export abstract class BaseService<
   }
 
   async findMany(
-    params: QueryParams & { include?: I; select?: S } = {}
+    params: QueryParams<K> & { include?: I; select?: S } = {}
   ): Promise<T[]> {
     const { where, sort, order, include, select } = params;
     const cacheKey = this.getCacheKey({ where, sort, order }, include, select);
@@ -238,7 +238,7 @@ export abstract class BaseService<
   }
 
   async findManyPaginated(
-    params: PaginatedQueryParams & { include?: I; select?: S } = {}
+    params: PaginatedQueryParams<K> & { include?: I; select?: S } = {}
   ): Promise<PaginatedResult<T>> {
     const {
       page = 1,
@@ -375,7 +375,7 @@ export abstract class BaseService<
       error instanceof Error ? error.stack : undefined
     );
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      switch (error.code) {
+      switch ((error as Prisma.PrismaClientKnownRequestError).code) {
         case 'P2002':
           throw new BadRequestException(
             `${String(this.entityName)} 唯一字段衝突`
@@ -390,13 +390,13 @@ export abstract class BaseService<
           );
         default:
           throw new InternalServerErrorException(
-            `${operation} ${String(this.entityName)} 失敗: ${error.message}`
+            `${operation} ${String(this.entityName)} 失敗: ${(error as Prisma.PrismaClientKnownRequestError).message}`
           );
       }
     }
     if (error instanceof Prisma.PrismaClientValidationError) {
       throw new BadRequestException(
-        `無效嘅 ${String(this.entityName)} 數據: ${error.message}`
+        `無效嘅 ${String(this.entityName)} 數據: ${(error as Prisma.PrismaClientKnownRequestError).message}`
       );
     }
     throw new InternalServerErrorException(

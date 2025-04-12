@@ -5,6 +5,7 @@
     "module": "ESNext",
     "jsx": "preserve",
     "outDir": "./.next",
+    "moduleResolution": "bundler",
     "noEmit": true,
     "allowJs": true,
     "baseUrl": ".", 

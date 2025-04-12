@@ -66,7 +66,7 @@ export abstract class BaseController<
   async findAll(
     @Query('page', new ParseIntPipe({ optional: true })) page = 1,
     @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
-    @Query() query: PaginatedQueryParams,
+    @Query() query: PaginatedQueryParams<K>,
     @Query('where') whereStr?: string,
     @Query('include') includeStr?: string,
     @Query('select') selectStr?: string
@@ -152,7 +152,10 @@ export abstract class BaseController<
     try {
       return JSON.parse(includeStr) as I;
     } catch (error) {
-      throw new BadRequestException('無效嘅 include 參數');
+      throw new BadRequestException(
+        '無效嘅 include 參數',
+        (error as Error).message
+      );
     }
   }
 
@@ -161,7 +164,10 @@ export abstract class BaseController<
     try {
       return JSON.parse(selectStr) as S;
     } catch (error) {
-      throw new BadRequestException('無效嘅 select 參數');
+      throw new BadRequestException(
+        '無效嘅 select 參數',
+        (error as Error).message
+      );
     }
   }
 
@@ -170,7 +176,10 @@ export abstract class BaseController<
     try {
       return JSON.parse(whereStr) as EntityWhereInput<K>;
     } catch (error) {
-      throw new BadRequestException('無效嘅 where 參數', whereStr);
+      throw new BadRequestException(
+        '無效嘅 where 參數',
+        (error as Error).message
+      );
     }
   }
 }

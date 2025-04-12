@@ -8,7 +8,8 @@
     "emitDecoratorMetadata": true,
     "paths": {
       "src/*": ["./src/*"], // 相對於 baseUrl，映射到 apps/api/src/
-      "@glory-destiny-online-guide/prisma/*": ["../../packages/prisma/*"] // 映射到 Prisma Client
+      "@glory-destiny-online-guide/prisma": ["../../packages/prisma/generated/client/index.js"], // Root module
+      "@glory-destiny-online-guide/prisma/*": ["../../packages/prisma/generated/client/*"]
     }
   },
   "include": ["src/**/*", "test/**/*"],
