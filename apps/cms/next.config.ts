@@ -3,7 +3,7 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const nextConfig: NextConfig = {
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '/absproxy/3000',
-  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH + '/' || 'absproxy/3000/',
+  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH + '/' || '/absproxy/3000/',
   trailingSlash: true,
   transpilePackages: [
     '@glory-destiny-online-guide/ui',
