@@ -126,6 +126,7 @@ services:
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://api:4000
+      - NEXT_PUBLIC_BASE_PATH=/absproxy/3000
     develop:
       watch:
         - action: sync # 同步 cms 源碼改動

@@ -1,0 +1,16 @@
+node_modules/
+apps/api/node_modules/
+apps/cms/node_modules/
+packages/prisma/node_modules/
+packages/ui/node_modules/
+
+dist/
+apps/api/dist/
+apps/cms/dist/
+packages/prisma/dist/
+packages/ui/dist/
+
+pacakges/prisma/generated/
+.next/
+
+apps/cms/.next/

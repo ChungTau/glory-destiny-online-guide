@@ -22,9 +22,6 @@ generated/
 *.log.*
 *.tmp
 
-# Docker 相關（可選）
-*.dockerignore
-
 # IDE 同編輯器文件
 .vscode/
 .idea/
