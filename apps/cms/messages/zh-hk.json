@@ -1,3 +1,27 @@
 {
-    
+  "common": {
+    "header": {
+      "ariaLabel": "主要導航標頭"
+    },
+    "main": {
+      "ariaLabel": "主要內容區域"
+    },
+    "home": "主頁",
+    "error": "出錯啦，請再試一次。",
+    "english": "英文",
+    "chinese": "中文（香港）",
+    "loading": "載入中...",
+    "dashboard": "控制台",
+    "creatures": "生物",
+    "items": "物品",
+    "quests": "任務",
+    "geography": "地理",
+    "roles": "角色",
+    "skills": "技能",
+    "nation": "國家",
+    "area": "地區",
+    "role": "角色",
+    "job": "職業",
+    "race": "種族"
+  }
 }

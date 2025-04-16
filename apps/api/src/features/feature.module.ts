@@ -7,10 +7,12 @@ import { CreatureModule } from './creature/creature.module';
 import { QuestModule } from './quest/quest.module';
 import { ItemModule } from './item/item.module';
 import { SkillModule } from './skill/skill.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
     CoreModule,
+    AdminModule,
     GeographyModule,
     RoleModule,
     CreatureModule,
@@ -19,6 +21,7 @@ import { SkillModule } from './skill/skill.module';
     SkillModule,
   ],
   exports: [
+    AdminModule,
     GeographyModule,
     RoleModule,
     CreatureModule,

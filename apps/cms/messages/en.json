@@ -1,3 +1,27 @@
 {
-    
+  "common": {
+    "header": {
+      "ariaLabel": "Main navigation header"
+    },
+    "main": {
+      "ariaLabel": "Main content area"
+    },
+    "home": "Home",
+    "error": "Something went wrong. Please try again.",
+    "english": "English",
+    "chinese": "Chinese (Hong Kong)",
+    "loading": "Loading...",
+    "dashboard": "Dashboard",
+    "creatures": "Creatures",
+    "items": "Items",
+    "quests": "Quests",
+    "geography": "Geography",
+    "roles": "Roles",
+    "skills": "Skills",
+    "nation": "Nation",
+    "area": "Area",
+    "role": "Role",
+    "job": "Job",
+    "race": "Race"
+  }
 }

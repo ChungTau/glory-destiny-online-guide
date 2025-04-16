@@ -554,6 +554,22 @@ model Nation {
   collectionDetails  CollectionDetail[]
 }
 
+model NavItem { 
+    id Int @id @default(autoincrement()) 
+    name String @unique 
+    href String 
+    label String 
+    icon String? 
+    parentId Int? @map("parent_id") 
+    parent NavItem? @relation("NavItemParent", fields: [parentId], references: [id]) 
+    children NavItem[] @relation("NavItemParent") 
+    order Int @default(0) 
+    createdAt DateTime @default(now()) @map("created_at") 
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("nav_item") 
+}
+
 model ObtainMethod {
   id          Int       @id @default(autoincrement())
   type        ItemObtainType
