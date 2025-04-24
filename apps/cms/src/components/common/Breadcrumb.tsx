@@ -21,7 +21,7 @@ export function Breadcrumb() {
       className="flex items-center space-x-2 text-sm text-gray-600"
       aria-label="Breadcrumb"
     >
-      <Link href="/admin" className="hover:text-primary">
+      <Link href="/" className="hover:text-primary">
         {t('home')}
       </Link>
       {segments.map((segment, index) => {

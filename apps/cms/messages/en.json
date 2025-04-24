@@ -22,6 +22,22 @@
     "area": "Area",
     "role": "Role",
     "job": "Job",
-    "race": "Race"
+    "race": "Race",
+    "navError": "Failed to load navigation items",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "logoAlt": "Glory Destiny Online Guide Logo",
+    "sidebar": "Sidebar",
+    "expand": "Expand section",
+    "collapse": "Collapse section"
+  },
+  "nav-item": {
+    "dashboard": "Dashboard",
+    "geography": "Geography",
+    "role": "Role",
+    "nation": "Nation",
+    "area": "Area",
+    "race": "Race",
+    "job":"Job"
   }
 }

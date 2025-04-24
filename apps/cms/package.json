@@ -10,7 +10,9 @@
   "dependencies": {
     "@glory-destiny-online-guide/prisma": "workspace:*",
     "@glory-destiny-online-guide/ui": "workspace:*",
+    "framer-motion": "^12.7.3",
     "lucide-react": "0.487.0",
+    "nanoid": "^5.1.5",
     "next": "15.3.0",
     "next-intl": "^4.0.2",
     "react": "19.1.0",

@@ -22,6 +22,22 @@
     "area": "地區",
     "role": "角色",
     "job": "職業",
-    "race": "種族"
+    "race": "種族",
+    "navError": "無法載入導航項目",
+    "openMenu": "開啟選單",
+    "closeMenu": "關閉選單",
+    "logoAlt": "榮耀命運線上指南標誌",
+    "sidebar": "側邊欄",
+    "expand": "展開分區",
+    "collapse": "收起分區"
+  },
+  "nav-item": {
+    "dashboard": "主頁",
+    "geography": "地理",
+    "role": "角色",
+    "nation": "國度",
+    "area": "區域",
+    "race": "種族",
+    "job":"職業"
   }
 }

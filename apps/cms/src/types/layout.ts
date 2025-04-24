@@ -5,3 +5,7 @@ import { ReactNode } from 'react';
 export interface LayoutProps {
   children: ReactNode;
 }
+
+export interface LocaleLayoutProps extends LayoutProps {
+  params: Promise<{ locale: string }>;
+}
